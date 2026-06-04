@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nokino — Case Study</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { 
+            --bg: #F5F5F3; 
+            --main: #111; 
+            --mute: #666; 
+            --border: #dcdcdc; 
+            --surface: #E6E6E6; 
+            --brand-green: #314a3d; 
+            --brand-orange: #E66A45;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--main); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        a { text-decoration: none; color: inherit; }
+        .container { max-width: 1040px; margin: 0 auto; padding: 0 5vw; }
+        img { max-width: 100%; display: block; border-radius: 12px; }
+
+        /* --- STICKY HEADER --- */
+        header { 
+            position: sticky; 
+            top: 0; 
+            background: rgba(245, 245, 243, 0.95); 
+            backdrop-filter: blur(8px);
+            padding: 32px 0; 
+            z-index: 100; 
+            border-bottom: none; 
+            width: 100%;
+        }
+        .header-container { max-width: 1140px; margin: 0 auto; padding: 0 5vw; display: flex; align-items: center; }
+        .header-logo { font-size: 1.35rem; font-weight: 500; color: var(--mute); display: flex; align-items: center; gap: 14px; transition: color 0.2s; letter-spacing: -0.01em; }
+        .header-logo:hover { color: var(--main); }
+        .header-logo span { color: var(--main); font-weight: 700; }
+
+        /* --- EDITORIAL TYPOGRAPHY --- */
+        .kicker { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--mute); margin-bottom: 24px; }
+        .hero-title { font-size: clamp(3rem, 5vw, 4.5rem); font-weight: 600; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 24px; }
+        .body-lg { font-size: 1.25rem; line-height: 1.6; color: #333; margin-bottom: 20px; }
+        .body-md { font-size: 1.05rem; line-height: 1.6; color: #333; margin-bottom: 16px; }
+        .bullet-list { margin-left: 20px; list-style-type: disc; font-size: 1.05rem; line-height: 1.6; color: #333; }
+        .bullet-list li { margin-bottom: 8px; }
+
+        .meta-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 32px; margin-top: 32px; margin-bottom: 40px; }
+        .meta-item { font-size: 0.9rem; font-weight: 500; color: var(--mute); text-transform: uppercase; letter-spacing: 0.05em; }
+        .meta-item strong { color: var(--main); font-weight: 600; }
+
+        /* --- MODULAR LAYOUT SYSTEM --- */
+        .section-block { padding: 120px 0; border-bottom: 1px solid var(--border); }
+        .hero-editorial { text-align: center; padding-bottom: 80px; max-width: 840px; margin: 0 auto; }
+        
+        .asym-split { display: grid; grid-template-columns: 1fr 2.5fr; gap: 60px; align-items: start; margin-bottom: 80px; }
+        .split-left h3 { font-size: 1.5rem; font-weight: 600; }
+        
+        .grid-half { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; align-items: start; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .grid-4 img { box-shadow: 0 15px 35px rgba(0,0,0,0.08); border-radius: 24px; width: 100%; aspect-ratio: 9/19; object-fit: cover; }
+        .card-surface { background: var(--surface); border-radius: 24px; padding: 40px; }
+
+        /* --- TIMELINE CSS --- */
+        .timeline-container { position: relative; margin-top: 40px; }
+        .timeline-track { position: absolute; top: 37px; left: 6px; right: 2%; height: 1px; background: var(--main); z-index: 1; }
+        .timeline-track::after { content: ''; position: absolute; right: -2px; top: -3px; border-width: 4px 0 4px 6px; border-style: solid; border-color: transparent transparent transparent var(--main); }
+        
+        .timeline-stages { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; position: relative; z-index: 2; }
+        .stage-title { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; margin-bottom: 16px; letter-spacing: 0.05em; color: var(--main); line-height: 1; height: 14px; display: flex; align-items: center; }
+        .stage-node { width: 14px; height: 14px; border: 2px solid var(--main); background: var(--surface); border-radius: 50%; margin-bottom: 24px; position: relative; z-index: 2; }
+        
+        .stage-list { list-style: none; padding: 0; }
+        .stage-list li { font-size: 0.95rem; color: var(--main); margin-bottom: 6px; display: flex; line-height: 1.4; }
+        .stage-list li::before { content: '•'; margin-right: 8px; font-weight: bold; }
+
+        /* --- CUTTING ROOM FLOOR (REJECTED IDEAS) CSS --- */
+        .rejected-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 60px; }
+        .rejected-card { background: #fff; padding: 40px 32px; border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.05); position: relative; cursor: pointer; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid var(--border); }
+        .rejected-card:hover { transform: translateY(-10px); }
+        .rejected-card h4 { font-size: 1.25rem; font-weight: 700; margin-bottom: 16px; color: var(--main); }
+        .rejected-card p { font-size: 0.95rem; color: #555; line-height: 1.6; }
+        .reason-text { margin-top: 24px; font-size: 0.85rem; color: #888; font-weight: 500; }
+        
+        .stamp { 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%) rotate(-15deg) scale(2); 
+            opacity: 0; 
+            color: #D32F2F; 
+            border: 4px solid #D32F2F; 
+            padding: 8px 16px; 
+            font-size: 1.5rem; 
+            font-weight: 900; 
+            letter-spacing: 0.1em; 
+            border-radius: 8px; 
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            pointer-events: none; 
+        }
+        .rejected-card:hover .stamp { opacity: 1; transform: translate(-50%, -50%) rotate(-15deg) scale(1); }
+
+        /* --- HORIZONTAL LOOP TRACK (SECTION 6) --- */
+        .loop-track-container { 
+            display: flex; 
+            gap: 20px; 
+            overflow-x: auto; 
+            padding: 10px 0 40px; 
+            scroll-snap-type: x mandatory; 
+            scrollbar-width: none;
+        }
+        .loop-track-container::-webkit-scrollbar { display: none; }
+        .loop-step { 
+            flex: 0 0 280px; 
+            scroll-snap-align: start; 
+            background: var(--brand-green); 
+            color: white; 
+            padding: 40px 32px; 
+            border-radius: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            overflow: hidden; 
+        }
+        .loop-step-num { 
+            font-size: 5rem; 
+            font-weight: 700; 
+            opacity: 0.15; 
+            position: absolute; 
+            top: -10px; 
+            right: 16px; 
+            line-height: 1; 
+        }
+        .loop-step h4 { font-size: 1.2rem; font-weight: 600; z-index: 2; margin-bottom: 12px; }
+        .loop-step p { font-size: 0.95rem; line-height: 1.5; opacity: 0.9; z-index: 2; margin: 0; color: #E8EDE9; }
+
+        /* --- FIXED: POLAROID BTS CSS --- */
+        .bts-container { position: relative; height: 450px; width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 60px; margin-bottom: 80px; }
+        .polaroid { 
+            background: white; 
+            padding: 16px 16px 60px 16px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15); 
+            border-radius: 4px; 
+            position: absolute; 
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease; 
+            width: 300px; 
+            height: 350px; 
+            display: flex; 
+            flex-direction: column; 
+            cursor: pointer; 
+            will-change: transform; 
+        }
+        .polaroid img { width: 100%; height: 100%; object-fit: cover; background: #eee; }
+        .polaroid-caption { position: absolute; bottom: 20px; left: 0; width: 100%; text-align: center; font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600; color: #333; }
+        
+        .p1 { transform: rotate(-6deg) translateX(-160px); z-index: 1; }
+        .p2 { transform: rotate(8deg) translateX(160px); z-index: 2; }
+        
+        .p1:hover { transform: rotate(-6deg) translateX(-160px) scale(1.05) translateY(-10px); z-index: 10; box-shadow: 0 30px 60px rgba(0,0,0,0.25); }
+        .p2:hover { transform: rotate(8deg) translateX(160px) scale(1.05) translateY(-10px); z-index: 10; box-shadow: 0 30px 60px rgba(0,0,0,0.25); }
+
+        /* --- SCROLL REVEAL --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1), 
+                        transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: opacity, transform;
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* --- FOOTER --- */
+        .dark { background: #1a1a1a; color: #fff; padding: 120px 0 60px; }
+        .footer-wrapper { max-width: 1040px; margin: 0 auto; padding: 0 5vw; display: flex; flex-direction: column; gap: 80px; }
+        .footer-row { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; align-items: start; }
+        .back-link { font-size: 1.05rem; color: #999; font-weight: 500; transition: color 0.2s; margin-bottom: 40px; display: inline-block; }
+        .back-link:hover { color: #fff; }
+        .footer-col-left h2 { font-size: 3.5rem; font-weight: 600; letter-spacing: -0.03em; margin: 0; }
+        .books-grid { display: flex; gap: 40px; }
+        .book { position: relative; width: 240px; aspect-ratio: 457/655; perspective: 2000px; cursor: pointer; }
+        .layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+        .cover { transform-origin: left center; transition: transform 0.6s cubic-bezier(.17,.88,.32,1.1); z-index: 3; }
+        .book:hover .cover { transform: rotateY(-22deg); }
+        .book:hover { transform: translateY(-4px); transition: .5s; }
+        .footer-book .back { transform: translate(2px, 3px); clip-path: inset(0px); z-index: 1; }
+        .footer-book .pages { transform: translate(1px, 1.5px); z-index: 2; }
+        .footer-col-left h3 { font-size: 1.4rem; font-weight: 500; color: #fff; margin: 0; }
+        
+        .contact-list { display: flex; flex-direction: column; width: 100%; max-width: 520px; }
+        
+        /* UPDATED: ANIMATED CONNECT LINKS FOR DARK FOOTER */
+        .contact-link { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 20px 0; 
+            border-bottom: 1px solid #333; 
+            font-size: 1.1rem; 
+            color: #ddd; 
+            transition: color 0.4s ease; 
+            cursor: pointer; 
+        }
+        .contact-link:first-child { padding-top: 0; }
+        .contact-link:hover { color: #fff; }
+        
+        .contact-text {
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .contact-link:hover .contact-text {
+            transform: translateX(16px);
+        }
+        
+        .contact-arrow {
+            display: inline-block;
+            font-size: 1.1em;
+            transform-origin: center;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .contact-link:hover .contact-arrow {
+            transform: rotate(45deg);
+        }
+
+        .footer-bottom { border-top: 1px solid #333; padding-top: 40px; color: #999; font-size: 0.9rem; }
+
+        @media (max-width: 900px) {
+            .asym-split { grid-template-columns: 1fr; gap: 24px; }
+            .grid-half { grid-template-columns: 1fr; gap: 40px; }
+            .grid-3 { grid-template-columns: 1fr !important; }
+            .grid-4 { grid-template-columns: 1fr 1fr; }
+            .rejected-grid { grid-template-columns: 1fr; }
+            .footer-row { grid-template-columns: 1fr; gap: 40px; }
+            .footer-wrapper { gap: 60px; }
+            .books-grid { flex-direction: column; align-items: flex-start; }
+            
+            .timeline-stages { grid-template-columns: 1fr; gap: 32px; padding-left: 20px; border-left: 1px solid var(--main); margin-left: 6px; }
+            .timeline-track { display: none; }
+            .stage-node { position: absolute; left: -28px; top: 0; margin: 0; background: var(--surface); }
+            
+            .bts-container { flex-direction: column; height: auto; gap: 40px; margin-top: 40px; margin-bottom: 60px; }
+            .polaroid { position: relative; transform: none !important; margin: 0 auto; }
+            .p1:hover, .p2:hover { transform: scale(1.05) translateY(-10px) !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="header-logo">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+                    <path d="M8 12h8"></path>
+                </svg>
+                Nayesha / <span>Nokino</span>
+            </a>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <section class="section-block">
+            <div class="hero-editorial">
+                <h1 class="hero-title reveal">Actionable Habits.<br>Gamified Learning.<br>Real Impact.</h1>
+                <div class="kicker reveal">01. Overview</div>
+                <p class="body-lg reveal">Nokino is a gamified sustainability education app designed specifically for teenagers (ages 13-19). Inspired by Duolingo, it transforms learning into a competitive, interactive experience using narrative-driven lessons, mini-games, and real-world action challenges. Structured as a disposable learning tool, Nokino encourages long-term sustainable habits without requiring indefinite screen time.</p>
+                
+                <div class="meta-container reveal">
+                    <div class="meta-item">Project: <strong>Nokino</strong></div>
+                    <div class="meta-item">Type: <strong>Gamified Mobile App</strong></div>
+                    <div class="meta-item">Tools: <strong>Figma</strong></div>
+                    <div class="meta-item">Year: <strong>2026</strong></div>
+                </div>
+            </div>
+
+            <div class="grid-4 reveal">
+                <img src="nokino-screen1.png" alt="Nokino App Screen 1">
+                <img src="nokino-screen2.png" alt="Nokino App Screen 2">
+                <img src="nokino-screen3.png" alt="Nokino App Screen 3">
+                <img src="nokino-screen4.png" alt="Nokino App Screen 4">
+            </div>
+        </section>
+
+        <section class="section-block">
+            <div style="text-align: center; margin-bottom: 60px;" class="reveal">
+                <div class="kicker">02. The Green Gap</div>
+                <h2 class="hero-title" style="font-size: clamp(2.5rem, 4vw, 3.5rem); margin-bottom: 0;">The Eco-Anxiety<br>Paralysis</h2>
+            </div>
+
+            <div class="asym-split" style="margin-bottom: 60px;">
+                <div class="split-left reveal">
+                    <h3 style="font-size: 1.25rem; font-weight: 500;">The Current Reality</h3>
+                </div>
+                <div class="split-right reveal">
+                    <p class="body-md">
+                        Traditional sustainability education isn't working for Gen Z. It's too complex, too theoretical, and frankly, too boring. While teenagers are highly aware of climate change, the sheer scale of the problem leads to eco-anxiety rather than action. They lack clear, bite-sized steps to make a difference in their daily lives.
+                    </p>
+                    
+                    <div class="grid-half" style="border-top: 1px solid var(--border); padding-top: 40px; margin-top: 40px;">
+                        <div>
+                            <div style="font-size: 4.5rem; font-weight: 600; color: #111; margin-bottom: 12px; line-height: 1; letter-spacing: -0.04em;">67%</div>
+                            <p class="body-md" style="font-size: 0.95rem; color: #555;">Of teens are concerned about the climate but struggle to find easy, actionable steps to help.</p>
+                        </div>
+                        <div>
+                            <div style="font-size: 4.5rem; font-weight: 600; color: #111; margin-bottom: 12px; line-height: 1; letter-spacing: -0.04em;">7 hrs</div>
+                            <p class="body-md" style="font-size: 0.95rem; color: #555;">Average daily mobile screen time for teens. If we want to change their habits, we have to meet them where they live.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-block">
+            <div style="text-align: center; margin-bottom: 120px;" class="reveal">
+                <div class="kicker">03. RESEARCH & STRATEGY</div>
+                <h2 class="hero-title" style="font-size: clamp(2.5rem, 4vw, 3.5rem); margin-bottom: 0;">Understanding the<br>Teen Mindset</h2>
+            </div>
+
+            <div class="asym-split" style="margin-bottom: 80px;">
+                <div class="split-left reveal">
+                    <h3 style="font-size: 1.25rem; font-weight: 500;">Key Discoveries</h3>
+                </div>
+                <div class="split-right grid-half reveal">
+                    <div>
+                        <h4 style="margin-bottom: 16px; font-size: 1.15rem;">Gamification's Role</h4>
+                        <p class="body-md" style="font-size: 1rem; color: #444;">Through competitive analysis of apps like Duolingo and Forest, I found that gamification significantly enhances commitment. Users demonstrate higher retention when rewards are tied to real-world impact and social competition.</p>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 16px; font-size: 1.15rem;">Habit Formation</h4>
+                        <p class="body-md" style="font-size: 1rem; color: #444;">Referencing B.J. Fogg's Behavior Model, I realized that big lectures fail. Small, bite-sized tasks (microlearning) paired with instant gratification are required to foster genuine habit formation over time.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="asym-split" style="margin-bottom: 120px;">
+                <div class="split-left reveal">
+                    <h3 style="font-size: 1.25rem; font-weight: 500;">Defining Strategy</h3>
+                </div>
+                <div class="split-right reveal">
+                    <h4 style="margin-bottom: 16px; font-size: 1.25rem;">Shifting the Educational Paradigm</h4>
+                    <p class="body-md" style="font-size: 1.05rem; color: #444;">Instead of reading dense articles, users needed to learn by doing. The system had to be fun enough to compete with social media, yet structured enough to leave them with lasting, real-world sustainable habits.</p>
+                    
+                    <h4 style="margin-top: 40px; margin-bottom: 16px; font-size: 1.15rem;">Core Parameters</h4>
+                    <ul class="bullet-list" style="font-size: 1rem; color: #444;">
+                        <li><strong>Actionable Tasks:</strong> Focus strictly on simple, daily challenges (e.g., taking the bus, using a reusable bottle).</li>
+                        <li><strong>Meaningful Stakes:</strong> Progress and failures must have emotional weight—enter Noki, the mascot whose survival depends on the user.</li>
+                        <li><strong>Real-World Rewards:</strong> Virtual points aren't enough; they must translate into tangible discounts at local thrift stores and sustainable brands.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card-surface reveal">
+                <h3 style="text-align: center; margin-bottom: 60px; font-size: 1.25rem; font-weight: 600;">Process Overview</h3>
+                
+                <div class="timeline-container">
+                    <div class="timeline-track"></div>
+                    <div class="timeline-stages">
+                        
+                        <div class="stage">
+                            <div class="stage-title">Discovery</div>
+                            <div class="stage-node"></div>
+                            <ul class="stage-list">
+                                <li>Behavioral Study</li>
+                                <li>Competitor Analysis</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="stage">
+                            <div class="stage-title">Ideation</div>
+                            <div class="stage-node"></div>
+                            <ul class="stage-list">
+                                <li>Brainstorming</li>
+                                <li>Defining Core Loop</li>
+                                <li>Mascot Concepting</li>
+                            </ul>
+                        </div>
+
+                        <div class="stage">
+                            <div class="stage-title">Prototyping</div>
+                            <div class="stage-node"></div>
+                            <ul class="stage-list">
+                                <li>Wireframes</li>
+                                <li>Noki Design</li>
+                                <li>Mini-games</li>
+                            </ul>
+                        </div>
+
+                        <div class="stage">
+                            <div class="stage-title">Testing</div>
+                            <div class="stage-node"></div>
+                            <ul class="stage-list">
+                                <li>Usability Sessions</li>
+                                <li>Gen-Z Feedback</li>
+                            </ul>
+                        </div>
+
+                        <div class="stage">
+                            <div class="stage-title">Refinement</div>
+                            <div class="stage-node"></div>
+                            <ul class="stage-list">
+                                <li>UI Polish</li>
+                                <li>Figma Transitions</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-block">
+            <div class="reveal" style="text-align: center; max-width: 680px; margin: 0 auto;">
+                <div class="kicker" style="margin-bottom: 16px;">04. IDEATION</div>
+                <h2 class="hero-title" style="font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 24px;">The Cutting Room Floor</h2>
+                <p class="body-lg" style="color: #444;">
+                    Finding a unique approach to sustainability wasn't easy. Here are the ideas that had to die so Nokino could live. Hover to reject.
+                </p>
+            </div>
+
+            <div class="rejected-grid reveal">
+                <div class="rejected-card">
+                    <h4>Peeps</h4>
+                    <p>A social app to join people and network over sustainability goals.</p>
+                    <div class="stamp">REJECTED</div>
+                    <p class="reason-text">Reason: Teenagers do not care about networking.</p>
+                </div>
+                
+                <div class="rejected-card">
+                    <h4>Thrifty</h4>
+                    <p>A fashion app strictly focused on thrifting and dressing to impress.</p>
+                    <div class="stamp">REJECTED</div>
+                    <p class="reason-text">Reason: Too boring and singular in focus.</p>
+                </div>
+                
+                <div class="rejected-card">
+                    <h4>Beach Clean AR</h4>
+                    <p>A Pokémon Go style app encouraging local beach cleanups for virtual items.</p>
+                    <div class="stamp">REJECTED</div>
+                    <p class="reason-text">Reason: Parents won't let teens wander to beaches alone, and AR was out of scope.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-block" style="border-top: 1px solid var(--border);">
+            
+            <div style="text-align: center; margin-bottom: 80px;" class="reveal">
+                <div class="kicker" style="margin-bottom: 8px;">05. Design Concepts</div>
+                <h2 class="hero-title" style="font-size: clamp(2.5rem, 4vw, 3.5rem); margin-bottom: 16px;">Stage 01: The Task Flow</h2>
+                <p class="body-lg" style="max-width: 680px; margin: 0 auto; color: var(--mute); font-size: 1.15rem;">I brought my vision to life with an initial concept focused on daily tasks, basic rewards, and a trash sorting mini-game.</p>
+            </div>
+
+            <div class="grid-3">
+                
+                <div class="reveal" style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+                    <div style="margin-bottom: 40px; min-height: 180px;">
+                        <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 12px;">Task-Based Learning</h3>
+                        <p class="body-md" style="font-size: 0.95rem; color: #444; line-height: 1.6; margin: 0;">I wanted users to complete simple, eco-friendly tasks every day, like using a reusable water bottle or taking public transport. The goal was to make sustainability feel tangible and easily integratable into daily routines.</p>
+                    </div>
+                    <img src="nokino-stage1-1.png" alt="Stage 1 Task Screen" style="width: 100%; aspect-ratio: 9/19; object-fit: cover; object-position: top; border-radius: 32px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.03); display: block; background: var(--surface);">
+                </div>
+
+                <div class="reveal" style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+                    <div style="margin-bottom: 40px; min-height: 180px;">
+                        <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 12px;">The Trash Sorting Game</h3>
+                        <p class="body-md" style="font-size: 0.95rem; color: #444; line-height: 1.6; margin: 0;">This served as the primary engagement hook. Users were challenged to quickly sort waste into the correct recycle, compost, or landfill bins. It was designed to test reflexes and baseline knowledge simultaneously.</p>
+                    </div>
+                    <img src="nokino-stage1-2.png" alt="Stage 1 Trash Game Screen" style="width: 100%; aspect-ratio: 9/19; object-fit: cover; object-position: top; border-radius: 32px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.03); display: block; background: var(--surface);">
+                </div>
+
+                <div class="reveal" style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+                    <div style="margin-bottom: 40px; min-height: 180px;">
+                        <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 12px;">Mascot & Basic Rewards</h3>
+                        <p class="body-md" style="font-size: 0.95rem; color: #444; line-height: 1.6; margin: 0;">Noki was introduced to serve as a guide and cheerleader. Users earned points and NokiWatts to keep the mascot powered, but the initial flow lacked variation and immediate, actionable real-world connections.</p>
+                    </div>
+                    <img src="nokino-stage1-3.png" alt="Stage 1 Noki Mascot Screen" style="width: 100%; aspect-ratio: 9/19; object-fit: cover; object-position: top; border-radius: 32px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.03); display: block; background: var(--surface);">
+                </div>
+
+            </div>
+
+            <div class="reveal" style="text-align: center; margin-top: 100px;">
+                <h3 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 20px; letter-spacing: -0.01em;">Identifying the Friction</h3>
+                <p class="body-lg" style="max-width: 760px; margin: 0 auto; color: #444; font-size: 1.1rem; line-height: 1.6;">
+                    Testing with a 16-year-old and an 18-year-old revealed major roadblocks. The trash sorting game lacked immediate feedback, leaving users confused if they sorted correctly. Furthermore, after completing a task, the main menu failed to provide a clear path forward, and the static backgrounds failed to keep users fully engaged. This static, confusing iteration proved we needed heavy UI enhancements before moving forward.
+                </p>
+            </div>
+
+        </section>
+
+        <section class="section-block" style="border-top: 1px solid var(--border);">
+            <div class="asym-split reveal" style="margin-bottom: 40px;">
+                <div class="split-left">
+                    <div class="kicker">06. MECHANICS</div>
+                </div>
+                <div class="split-right">
+                    <h3 style="font-size: 2.2rem; margin-bottom: 24px; font-weight: 600; letter-spacing: -0.02em;">The 5-Level Progression</h3>
+                    <p class="body-lg" style="margin-bottom: 0;">
+                        Information is grouped into 4 distinct tracks: What is Sustainability, Sustainable Fashion, Zero Waste Living, and Energy & Climate. Each track relies on a tight 5-level progression loop to keep users engaged.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="loop-track-container reveal">
+                <div class="loop-step">
+                    <div class="loop-step-num">1</div>
+                    <h4>Minigame</h4>
+                    <p>High-energy hooks like "Recycle Rush" to test reflexes and baseline knowledge.</p>
+                </div>
+                <div class="loop-step">
+                    <div class="loop-step-num">2</div>
+                    <h4>Flashcards</h4>
+                    <p>Bite-sized microlearning delivering essential facts without overwhelming text.</p>
+                </div>
+                <div class="loop-step">
+                    <div class="loop-step-num">3</div>
+                    <h4>Daily Task</h4>
+                    <p>Real-world integration: "Take the bus" or "Use a reusable bottle".</p>
+                </div>
+                <div class="loop-step">
+                    <div class="loop-step-num">4</div>
+                    <h4>Story Level</h4>
+                    <p>Narrative-driven decision-making scenarios hosted by Noki.</p>
+                </div>
+                <div class="loop-step">
+                    <div class="loop-step-num">5</div>
+                    <h4>Final Quiz</h4>
+                    <p>Reinforcing knowledge to earn final NokiWatts and virtual badges.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-block">
+            
+            <div style="text-align: center; margin-bottom: 80px;" class="reveal">
+                <div class="kicker" style="margin-bottom: 8px;">Shaping the Solution with</div>
+                <h2 class="hero-title" style="font-size: clamp(3rem, 5vw, 4.5rem); margin-bottom: 0; letter-spacing: -0.03em;">Nokino</h2>
+            </div>
+
+            <div class="asym-split reveal">
+                <div class="split-left">
+                    <h3 style="font-size: 1.25rem; font-weight: 500;">At a Glance</h3>
+                </div>
+                
+                <div class="split-right">
+                    <p class="body-lg" style="margin-bottom: 24px;">
+                        <strong>Nokino</strong> is a gamified educational tool designed to bridge the gap between teens' environmental awareness and actual, real-world action. It translates overwhelming climate anxiety into achievable, bite-sized daily habits.
+                    </p>
+                    
+                    <p class="body-lg" style="margin-bottom: 40px;">
+                        Unlike traditional platforms, it is structured as a <strong>"disposable learning tool."</strong> The ultimate goal isn't to keep teens addicted to the screen forever, but to graduate them into the real world once sustainable habits are firmly established.
+                    </p>
+
+                    <h4 style="font-size: 1.15rem; font-weight: 600; margin-bottom: 16px;">Key Features</h4>
+                    <ul class="bullet-list" style="margin-left: 24px;">
+                        <li><strong>Interactive Mini-Games:</strong> "Recycle Rush" and "Style Swap" reinforce concepts actively instead of passively.</li>
+                        <li><strong>Narrative Driven:</strong> Mascot-led story levels contextualize abstract daily choices.</li>
+                        <li><strong>Social Competition:</strong> Leaderboards and group challenges leverage the natural social influence of teens.</li>
+                        <li><strong>Tangible Incentives:</strong> In-app progress unlocks real-world discounts at sustainable brands and thrift stores.</li>
+                    </ul>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="section-block">
+            
+            <div style="text-align: center; margin-bottom: 120px;" class="reveal">
+                <div class="kicker" style="margin-bottom: 8px;">08. The Final UI</div>
+                <h2 class="hero-title" style="font-size: clamp(2.5rem, 4vw, 3.5rem); margin-bottom: 0; letter-spacing: -0.02em;">Pixels, Polish, & Play</h2>
+            </div>
+
+            <div class="reveal" style="display: grid; grid-template-columns: 1fr 2.2fr; gap: 80px; align-items: center; margin-bottom: 80px; padding-bottom: 80px; border-bottom: 1px solid var(--border);">
+                <div style="width: 100%; max-width: 320px; margin: 0 auto;">
+                    <img src="nokino-screen2.png" alt="Nokino Final Home Screen" style="width: 100%; aspect-ratio: 9/19; object-fit: cover; border-radius: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); display: block; background: var(--surface);">
+                </div>
+                <div>
+                    <h2 style="font-size: 2.8rem; font-weight: 600; letter-spacing: -0.03em; margin-bottom: 24px;">The Mascot-Driven Hub</h2>
+                    <p class="body-lg" style="margin-bottom: 40px; color: #333; max-width: 600px;">
+                        A clean, vibrant interface featuring Earthy tones with bright accents to keep the aesthetic energetic but grounded.
+                    </p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                        <div>
+                            <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--main);">Functional Rationale</h4>
+                            <p class="body-md" style="font-size: 0.95rem; color: #555; margin: 0;">Noki acts as both guide and stakes. The round, soft shapes make him approachable, while his "energy" mechanic keeps users accountable for daily tasks.</p>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--main);">Core Features</h4>
+                            <p class="body-md" style="font-size: 0.95rem; color: #555; margin: 0;"><strong>Visual Progress:</strong> Clear track paths replacing the confusing menus of Stage 1.<br><br><strong>NokiWatts:</strong> Energy levels tied directly to the mascot's wellbeing.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reveal" style="display: grid; grid-template-columns: 1fr 2.2fr; gap: 80px; align-items: center; margin-bottom: 80px; padding-bottom: 80px; border-bottom: 1px solid var(--border);">
+                <div style="width: 100%; max-width: 320px; margin: 0 auto;">
+                    <img src="nokino-ui-story.png" alt="Nokino Story Scenario Screen" style="width: 100%; aspect-ratio: 9/19; object-fit: cover; border-radius: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); display: block; background: var(--surface);">
+                </div>
+                <div>
+                    <h2 style="font-size: 2.8rem; font-weight: 600; letter-spacing: -0.03em; margin-bottom: 24px;">Narrative Decision Making</h2>
+                    <p class="body-lg" style="margin-bottom: 40px; color: #333; max-width: 600px;">
+                        Placing users directly into real-life decision scenarios, such as choosing between a 25-cent plastic bag or a 75-cent paper bag at a checkout counter.
+                    </p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                        <div>
+                            <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--main);">Functional Rationale</h4>
+                            <p class="body-md" style="font-size: 0.95rem; color: #555; margin: 0;">Simplifying sustainability issues into relatable, digestible role-playing moments helps teens connect abstract concepts to their everyday spending and habits.</p>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--main);">Core Features</h4>
+                            <p class="body-md" style="font-size: 0.95rem; color: #555; margin: 0;"><strong>Immediate Feedback:</strong> Clear consequences for every choice.<br><br><strong>Real-World Context:</strong> Moving beyond theory into actionable daily scenarios.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reveal" style="display: grid; grid-template-columns: 1fr 2.2fr; gap: 80px; align-items: center; margin-bottom: 80px; padding-bottom: 80px; border-bottom: 1px solid var(--border);">
+                <div style="width: 100%; max-width: 320px; margin: 0 auto;">
+                    <img src="nokino-ui-game.png" alt="Nokino Minigame Screen" style="width: 100%; aspect-ratio: 9/19; object-fit: cover; border-radius: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); display: block; background: var(--surface);">
+                </div>
+                <div>
+                    <h2 style="font-size: 2.8rem; font-weight: 600; letter-spacing: -0.03em; margin-bottom: 24px;">High-Speed Sorting</h2>
+                    <p class="body-lg" style="margin-bottom: 40px; color: #333; max-width: 600px;">
+                        The final iteration of the Trash Sorting mechanic, updated with immediate visual feedback to correct the confusion discovered during initial user testing.
+                    </p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                        <div>
+                            <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--main);">Functional Rationale</h4>
+                            <p class="body-md" style="font-size: 0.95rem; color: #555; margin: 0;">Providing real-time correct/incorrect indicators builds user confidence and reinforces learning loops without frustrating the player.</p>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--main);">Core Features</h4>
+                            <p class="body-md" style="font-size: 0.95rem; color: #555; margin: 0;"><strong>Time-Limited Challenges:</strong> Keeping engagement high and competitive.<br><br><strong>Microlearning:</strong> Subtly teaching proper waste management under pressure.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reveal" style="display: grid; grid-template-columns: 1fr 2.2fr; gap: 80px; align-items: center; margin-bottom: 80px;">
+                <div style="width: 100%; max-width: 320px; margin: 0 auto;">
+                    <img src="nokino-ui-rewards.png" alt="Nokino Rewards and Leaderboard Screen" style="width: 100%; aspect-ratio: 9/19; object-fit: cover; border-radius: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); display: block; background: var(--surface);">
+                </div>
+                <div>
+                    <h2 style="font-size: 2.8rem; font-weight: 600; letter-spacing: -0.03em; margin-bottom: 24px;">Tangible Incentives</h2>
+                    <p class="body-lg" style="margin-bottom: 40px; color: #333; max-width: 600px;">
+                        Bridging the gap between the app and the physical world. Users track progress against friends and trade virtual achievements for actual discounts at sustainable brands.
+                    </p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                        <div>
+                            <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--main);">Functional Rationale</h4>
+                            <p class="body-md" style="font-size: 0.95rem; color: #555; margin: 0;">Virtual points aren't always enough to drive long-term habit changes for teens. Connecting in-app progress to real-life social validation and financial incentives creates a much stronger behavioral loop.</p>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--main);">Core Features</h4>
+                            <p class="body-md" style="font-size: 0.95rem; color: #555; margin: 0;"><strong>Leaderboards:</strong> Compete with friends and local communities.<br><br><strong>Brand Partnerships:</strong> Unlock discounts at local thrift stores by completing eco-challenges.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="section-block" style="padding-bottom: 120px; border-top: 1px solid var(--border);">
+            <div class="reveal" style="text-align: center; max-width: 680px; margin: 0 auto;">
+                <div class="kicker" style="margin-bottom: 16px;">09. REFLECTION</div>
+                <h2 class="hero-title" style="font-size: clamp(2.5rem, 4vw, 3.5rem); margin-bottom: 24px;">Behind the Screens</h2>
+            </div>
+
+            <div class="bts-container reveal">
+                <div class="polaroid p1">
+                    <img src="bts-stressed1.png" alt="Working late on Figma">
+                    <div class="polaroid-caption">Figma transition nightmares</div>
+                </div>
+                <div class="polaroid p2">
+                    <img src="bts-stressed2.png" alt="Listening to Playboi Carti">
+                    <div class="polaroid-caption">Powered by Playboi Carti</div>
+                </div>
+            </div>
+
+            <div class="reveal" style="max-width: 800px; margin: 0 auto;">
+                <p class="body-lg" style="color: #444; margin-bottom: 24px;">
+                    Balancing gamification with education was incredibly hard. I had to constantly simplify complex sustainability concepts so they didn't feel preachy or overwhelming for a younger audience. The goal was always to build a "disposable learning tool"—an app that users eventually outgrow because the habits have successfully transferred into their real lives.
+                </p>
+                <p class="body-lg" style="color: #444;">
+                    Technically, polishing the UI meant creating a new Figma page for nearly every single micro-transition on the home screen. It was a massive effort for half-second interactions, but it was absolutely crucial for achieving that premium, game-like final feel. The late nights mapping out Noki's states and refining the "Recycle Rush" logic taught me the profound difference between a good idea and a viable, engaging digital product.
+                </p>
+            </div>
+        </section>
+
+    </div>
+
+    <footer class="dark">
+        <div class="footer-wrapper">
+            <div class="footer-row">
+                <div class="footer-col-left">
+                    <a href="index.html" class="back-link">← Go Back Home</a>
+                    <h2>Up Next</h2>
+                </div>
+                <div class="footer-col-right books-grid">
+                    <a href="snug.html" class="book footer-book">
+                        <img src="book-back-pink.png" class="layer back" alt="">
+                        <img src="book-pages.png" class="layer pages" alt="">
+                        <img src="snug-cover.png" class="layer cover" alt="Snug Project">
+                    </a>
+                    <a href="killjoys.html" class="book footer-book">
+                        <img src="killjoys-book-back.png" class="layer back" alt="">
+                        <img src="book-pages.png" class="layer pages" alt="">
+                        <img src="killjoys-cover.png" class="layer cover" alt="Killjoys Project">
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-row">
+                <div class="footer-col-left">
+                    <h3>Let's Connect</h3>
+                </div>
+                <div class="footer-col-right contact-list">
+                    <a href="#" class="contact-link">
+                        <span class="contact-text">Email</span> 
+                        <span class="contact-arrow">↗</span>
+                    </a>
+                    <a href="#" class="contact-link">
+                        <span class="contact-text">LinkedIn</span> 
+                        <span class="contact-arrow">↗</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>© 2026 All rights reserved</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px 0px -12% 0px',
+                threshold: 0.02
+            };
+
+            const revealCallback = (entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target); 
+                    }
+                });
+            };
+
+            const observer = new IntersectionObserver(revealCallback, observerOptions);
+            const revealElements = document.querySelectorAll('.reveal');
+            revealElements.forEach(el => observer.observe(el));
+        });
+    </script>
+</body>
+</html>

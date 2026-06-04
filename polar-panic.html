@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polar Panic | Nayesha Arora</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- BASE STYLES --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --bg-color: #F5F5F3; --text-main: #111111; --border-color: #dcdcdc; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-main); padding-bottom: 0; overflow-x: hidden; }
+        .container { max-width: 1140px; margin: 0 auto; padding: 0 5vw; }
+        a { text-decoration: none; color: #111; }
+
+        /* --- SMOOTH GLIDE REVEAL --- */
+        .reveal { 
+            opacity: 0; 
+            transform: translateY(60px); 
+            transition: opacity 1.6s cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 1.6s cubic-bezier(0.16, 1, 0.3, 1); 
+            will-change: opacity, transform; 
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* --- STICKY HEADER --- */
+        header { 
+            position: sticky; 
+            top: 0; 
+            background: rgba(245, 245, 243, 0.95); 
+            backdrop-filter: blur(8px);
+            padding: 32px 0; 
+            z-index: 100; 
+            border-bottom: none; 
+            width: 100%;
+        }
+        .header-container {
+            max-width: 1280px; 
+            margin: 0 auto; 
+            padding: 0 40px; 
+            display: flex;
+            align-items: center;
+        }
+        .header-logo {
+            font-size: 1.35rem; 
+            font-weight: 500; 
+            color: #888;
+            display: flex;
+            align-items: center;
+            gap: 14px; 
+            transition: color 0.2s;
+            letter-spacing: -0.01em;
+        }
+        .header-logo:hover { color: var(--text-main); }
+        .header-logo span { color: var(--text-main); font-weight: 700; }
+
+        /* --- SECTION STRUCTURE --- */
+        .section-block { padding: 120px 0; }
+        .kicker { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #888; }
+        .short-line { border-top: 1px solid var(--border-color); width: 100%; margin-bottom: 80px; }
+
+        /* --- FOOTER --- */
+        .dark { background: #1a1a1a; color: #fff; padding: 120px 0 60px; margin-top: 120px; }
+        .footer-wrapper { max-width: 1040px; margin: 0 auto; padding: 0 5vw; display: flex; flex-direction: column; gap: 80px; }
+        .footer-row { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; align-items: start; }
+        .back-link { font-size: 1.05rem; color: #999; font-weight: 500; transition: color 0.2s; margin-bottom: 40px; display: inline-block; }
+        .back-link:hover { color: #fff; }
+        .footer-col-left h2 { font-size: 3.5rem; font-weight: 600; letter-spacing: -0.03em; margin: 0; }
+        .books-grid { display: flex; gap: 40px; }
+        .book { position: relative; width: 240px; aspect-ratio: 457/655; perspective: 2000px; cursor: pointer; }
+        .layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+        .cover { transform-origin: left center; transition: transform 0.6s cubic-bezier(.17,.88,.32,1.1); z-index: 3; }
+        .book:hover .cover { transform: rotateY(-22deg); }
+        .book:hover { transform: translateY(-4px); transition: .5s; }
+        .footer-book .back { transform: translate(2px, 3px); clip-path: inset(0px); z-index: 1; }
+        .footer-book .pages { transform: translate(1px, 1.5px); z-index: 2; }
+        .footer-col-left h3 { font-size: 1.4rem; font-weight: 500; color: #fff; margin: 0; }
+        .contact-list { display: flex; flex-direction: column; width: 100%; max-width: 520px; }
+        .contact-link { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #333; font-size: 1.1rem; color: #ddd; transition: color 0.2s; }
+        .contact-link:first-child { padding-top: 0; }
+        .contact-link:hover { color: #fff; }
+        .footer-bottom { border-top: 1px solid #333; padding-top: 40px; color: #999; font-size: 0.9rem; }
+
+        @media (max-width: 900px) {
+            .footer-row { grid-template-columns: 1fr; gap: 40px; }
+            .footer-wrapper { gap: 60px; }
+            .books-grid { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- STICKY HEADER -->
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="header-logo">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"></rect><path d="M8 12h8"></path></svg>
+                Nayesha / <span>Polar Panic</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- SECTION 01: OVERVIEW -->
+    <section class="section-block" style="padding-top: 60px; padding-bottom: 60px;">
+        <div style="text-align: center; margin-bottom: 80px;" class="reveal">
+            <h1 style="font-size: clamp(3rem, 6vw, 5rem); font-weight: 600; line-height: 1.1; letter-spacing: -0.03em;">
+                Modular Boards.<br>Melting Ice.<br>Tactical Survival.
+            </h1>
+        </div>
+        <div style="max-width: 700px; margin: 0 auto; text-align: center;" class="reveal">
+            <div style="margin-bottom: 16px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #888;">01. Overview</div>
+            <p style="font-size: 1.25rem; line-height: 1.6; color: #333;">
+                Polar Panic is a 2–4 player multiplayer tabletop board game that integrates environmental stakes into core gameplay mechanics. By utilizing a progressive board-building system and resource management, the game forces players to navigate a shifting, unpredictable Arctic landscape where strategy must adapt as quickly as the ice melts.
+            </p>
+        </div>
+    </section>
+        
+    <!-- LOCKED FOOTER -->
+    <footer class="dark reveal">
+        <div class="footer-wrapper">
+            <div class="footer-row">
+                <div class="footer-col-left"><a href="index.html" class="back-link">← Go Back Home</a><h2>Up Next</h2></div>
+                <div class="footer-col-right books-grid">
+                    <!-- Swapped Nokino out for Killjoys in this specific footer -->
+                    <a href="killjoys.html" class="book footer-book"><img src="killjoys-book-back.png" class="layer back" alt=""><img src="book-pages.png" class="layer pages" alt=""><img src="killjoys-cover.png" class="layer cover" alt="Killjoys"></a>
+                    <a href="snug.html" class="book footer-book"><img src="nokino-book-back.png" class="layer back" alt=""><img src="book-pages.png" class="layer pages" alt=""><img src="snug-cover.png" class="layer cover" alt="Snug"></a>
+                </div>
+            </div>
+            <div class="footer-row"><div class="footer-col-left"><h3>Let's Connect</h3></div><div class="footer-col-right contact-list"><a href="#" class="contact-link"><span>Email</span> <span>↗</span></a><a href="#" class="contact-link"><span>LinkedIn</span> <span>↗</span></a></div></div>
+            <div class="footer-bottom"><p>© 2026 All rights reserved</p></div>
+        </div>
+    </footer>
+
+    <!-- ANIMATION SCRIPT -->
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>

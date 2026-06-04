@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polar Panic | Prototype</title>
+    <style>
+        body { margin: 0; background: #2D3E4E; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; font-family: sans-serif; }
+        .game-table { display: flex; flex-direction: column; align-items: center; gap: 60px; width: 100%; }
+        
+        /* Board Styling */
+        .board-container { width: 400px; height: 400px; perspective: 1000px; cursor: pointer; }
+        .board-card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .board-card.flipped { transform: rotateY(180deg); }
+        .board-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 12px; overflow: hidden; }
+        .board-back { transform: rotateY(180deg); }
+        .board-face img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Minimal Bear Token */
+        .bear-token { 
+            position: absolute; top: 45%; left: 45%; width: 30px; height: 30px; 
+            background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10; font-size: 14px;
+        }
+
+        /* Card Stack Fanning */
+        .card-stack { position: relative; width: 120px; height: 170px; cursor: pointer; }
+        .card { 
+            position: absolute; inset: 0; width: 100%; height: 100%; 
+            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform-origin: bottom center;
+            border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card img { width: 100%; height: 100%; border-radius: 8px; }
+
+        /* Fan offsets */
+        .card-stack.fan .card:nth-child(1) { transform: rotate(-20deg) translateX(-60px); }
+        .card-stack.fan .card:nth-child(2) { transform: rotate(0deg) translateX(0px); }
+        .card-stack.fan .card:nth-child(3) { transform: rotate(20deg) translateX(60px); }
+
+        .game-controls { display: flex; gap: 20px; }
+        .game-btn { 
+            padding: 12px 24px; border-radius: 40px; border: 1px solid white; 
+            background: transparent; color: white; cursor: pointer; font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-table">
+        <div class="board-container" onclick="flipBoard()">
+            <div class="board-card" id="board-card">
+                <div class="board-face board-front"><img src="polar-panic/board1.png" alt="Board"></div>
+                <div class="board-face board-back"><img src="polar-panic/board2.png" alt="Board Info"></div>
+                <div class="bear-token">🐻</div>
+            </div>
+        </div>
+
+        <div class="card-stack" id="card-stack" onclick="fanCards()">
+            <div class="card"><img src="polar-panic/card1front.png" alt="Card"></div>
+            <div class="card"><img src="polar-panic/card2front.png" alt="Card"></div>
+            <div class="card"><img src="polar-panic/wcard1front.png" alt="Card"></div>
+        </div>
+
+        <div class="game-controls">
+            <button class="game-btn" onclick="flipBoard()">Flip Board</button>
+            <button class="game-btn" onclick="fanCards()">Fan Cards</button>
+        </div>
+    </div>
+
+    <script>
+        function flipBoard() { document.getElementById('board-card').classList.toggle('flipped'); }
+        function fanCards() { document.getElementById('card-stack').classList.toggle('fan'); }
+    </script>
+</body>
+</html>

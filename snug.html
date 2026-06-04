@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>snug. — Case Study</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --bg: #F5F5F3; 
+            --main: #111; 
+            --mute: #666; 
+            --border: #dcdcdc; 
+            --surface: #E6E6E6; 
+            --accent-blue: #D5E5F2; 
+            --dark-box: #282828; 
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--main); -webkit-font-smoothing: antialiased; }
+        a { text-decoration: none; color: inherit; }
+        .container { max-width: 1040px; margin: 0 auto; padding: 0 5vw; }
+        img { max-width: 100%; display: block; border-radius: 12px; }
+
+        /* --- ACCORDION SYSTEM --- */
+        .accordion { border-top: 1px solid var(--border); margin-bottom: 40px; }
+        .accordion-item { border-bottom: 1px solid var(--border); }
+        .accordion-header { 
+            display: flex; 
+            align-items: center; 
+            padding: 24px 0; 
+            cursor: pointer; 
+            font-size: 1.15rem; 
+            font-weight: 600; 
+            color: var(--main);
+            transition: color 0.2s ease;
+        }
+        .accordion-header:hover { 
+            color: #999; 
+        }
+        .accordion-icon { 
+            margin-right: 16px; 
+            font-size: 1.4rem; 
+            font-weight: 300; 
+            color: var(--mute);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+        }
+        .accordion-content { 
+            max-height: 0; 
+            overflow: hidden; 
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s ease; 
+            color: #555; 
+            font-size: 1rem; 
+            line-height: 1.6; 
+            padding-left: 40px;
+        }
+        .accordion-item.active .accordion-content { 
+            max-height: 250px; 
+            padding-bottom: 24px; 
+        }
+        .accordion-item.active .accordion-icon { 
+            transform: rotate(45deg); 
+            color: var(--main);
+        }
+        .accordion-category {
+            font-size: 1rem; 
+            font-weight: 700; 
+            margin-top: 40px; 
+            margin-bottom: 16px; 
+            color: var(--main);
+        }
+
+        /* --- STICKY HEADER --- */
+        header { 
+            position: sticky; 
+            top: 0; 
+            background: rgba(245, 245, 243, 0.95); 
+            backdrop-filter: blur(8px);
+            padding: 32px 0; 
+            z-index: 100; 
+            border-bottom: none; 
+            width: 100%;
+        }
+        .header-container {
+            max-width: 1280px; 
+            margin: 0 auto; 
+            padding: 0 40px; 
+            display: flex;
+            align-items: center;
+        }
+        .header-logo {
+            font-size: 1.35rem; 
+            font-weight: 500; 
+            color: var(--mute);
+            display: flex;
+            align-items: center;
+            gap: 14px; 
+            transition: color 0.2s;
+            letter-spacing: -0.01em;
+        }
+        .header-logo:hover { color: var(--main); }
+        .header-logo span { color: var(--main); font-weight: 700; }
+
+        /* --- EDITORIAL TYPOGRAPHY --- */
+        .kicker { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--mute); margin-bottom: 24px; }
+        .hero-title { font-size: clamp(3rem, 5vw, 4.5rem); font-weight: 600; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 24px; }
+        .body-lg { font-size: 1.25rem; line-height: 1.6; color: #333; margin-bottom: 20px; }
+        .body-md { font-size: 1.05rem; line-height: 1.6; color: #333; margin-bottom: 16px; }
+        .bullet-list { margin-left: 20px; list-style-type: disc; font-size: 1.05rem; line-height: 1.6; color: #333; }
+        .bullet-list li { margin-bottom: 8px; }
+
+        .meta-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 32px; margin-top: 32px; margin-bottom: 40px; }
+        .meta-item { font-size: 0.9rem; font-weight: 500; color: var(--mute); text-transform: uppercase; letter-spacing: 0.05em; }
+        .meta-item strong { color: var(--main); font-weight: 600; }
+
+        /* --- MODULAR LAYOUT SYSTEM --- */
+        .section-block { padding: 120px 0; border-bottom: 1px solid var(--border); }
+        .hero-editorial { text-align: center; padding-bottom: 80px; max-width: 840px; margin: 0 auto; }
+        
+        .asym-split { display: grid; grid-template-columns: 1fr 2.5fr; gap: 60px; align-items: start; margin-bottom: 80px; }
+        .split-left h3 { font-size: 1.5rem; font-weight: 600; }
+        
+        .grid-half { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .grid-4 img { box-shadow: 0 15px 35px rgba(0,0,0,0.08); border-radius: 24px; width: 100%; aspect-ratio: 9/19; object-fit: cover; }
+
+        .card-surface { background: var(--surface); border-radius: 24px; padding: 40px; }
+        .card-blue { background: var(--accent-blue); border-radius: 24px; padding: 40px; }
+        .card-icon { width: 28px; height: 28px; margin-bottom: 16px; color: var(--main); }
+        .card-title { font-size: 1.15rem; font-weight: 600; margin-bottom: 12px; }
+        .card-text { font-size: 0.95rem; line-height: 1.5; color: #444; margin-bottom: 0; }
+
+        /* --- TIMELINE CSS --- */
+        .timeline-container { position: relative; margin-top: 40px; }
+        .timeline-track { position: absolute; top: 37px; left: 6px; right: 2%; height: 1px; background: var(--main); z-index: 1; }
+        .timeline-track::after { content: ''; position: absolute; right: -2px; top: -3px; border-width: 4px 0 4px 6px; border-style: solid; border-color: transparent transparent transparent var(--main); }
+        
+        .timeline-stages { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; position: relative; z-index: 2; }
+        .stage-title { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; margin-bottom: 16px; letter-spacing: 0.05em; color: var(--main); line-height: 1; height: 14px; display: flex; align-items: center; }
+        .stage-node { width: 14px; height: 14px; border: 2px solid var(--main); background: var(--surface); border-radius: 50%; margin-bottom: 24px; position: relative; z-index: 2; }
+        
+        .stage-list { list-style: none; padding: 0; }
+        .stage-list li { font-size: 0.95rem; color: var(--main); margin-bottom: 6px; display: flex; line-height: 1.4; }
+        .stage-list li::before { content: '•'; margin-right: 8px; font-weight: bold; }
+
+        /* --- SCROLL REVEAL DRIVER --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1), 
+                        transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: opacity, transform;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- BOOK PHYSICS & FOOTER --- */
+        .book { position: relative; width: 240px; aspect-ratio: 457/655; perspective: 2000px; cursor: pointer; }
+        .layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+        .cover { transform-origin: left center; transition: transform 0.6s cubic-bezier(.17,.88,.32,1.1); z-index: 3; }
+        .book:hover .cover { transform: rotateY(-22deg); }
+        .book:hover { transform: translateY(-4px); transition: .5s; }
+
+        .dark { background: #1a1a1a; color: #fff; padding: 120px 0 60px; }
+        .footer-wrapper { max-width: 1040px; margin: 0 auto; padding: 0 5vw; display: flex; flex-direction: column; gap: 80px; }
+        .footer-row { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; align-items: start; }
+        .back-link { font-size: 1.05rem; color: #999; font-weight: 500; transition: color 0.2s; margin-bottom: 40px; display: inline-block; }
+        .back-link:hover { color: #fff; }
+        .footer-col-left h2 { font-size: 3.5rem; font-weight: 600; letter-spacing: -0.03em; margin: 0; }
+        .books-grid { display: flex; gap: 40px; }
+        .footer-book .back { transform: translate(2px, 3px); clip-path: inset(0px); z-index: 1; }
+        .footer-book .pages { transform: translate(1px, 1.5px); z-index: 2; }
+        .footer-col-left h3 { font-size: 1.4rem; font-weight: 500; color: #fff; margin: 0; }
+        
+        .contact-list { display: flex; flex-direction: column; width: 100%; max-width: 520px; }
+        
+        /* UPDATED: ANIMATED CONNECT LINKS FOR DARK FOOTER */
+        .contact-link { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 20px 0; 
+            border-bottom: 1px solid #333; 
+            font-size: 1.1rem; 
+            color: #ddd; 
+            transition: color 0.4s ease; 
+            cursor: pointer; 
+        }
+        .contact-link:first-child { padding-top: 0; }
+        .contact-link:hover { color: #fff; }
+        
+        .contact-text {
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .contact-link:hover .contact-text {
+            transform: translateX(16px);
+        }
+        
+        .contact-arrow {
+            display: inline-block;
+            font-size: 1.1em;
+            transform-origin: center;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .contact-link:hover .contact-arrow {
+            transform: rotate(45deg);
+        }
+
+        .footer-bottom { border-top: 1px solid #333; padding-top: 40px; color: #999; font-size: 0.9rem; }
+
+        @media (max-width: 900px) {
+            .asym-split { grid-template-columns: 1fr; gap: 24px; }
+            .grid-half, .grid-3 { grid-template-columns: 1fr; gap: 40px; }
+            .grid-4 { grid-template-columns: 1fr 1fr; }
+            .footer-row { grid-template-columns: 1fr; gap: 40px; }
+            .footer-wrapper { gap: 60px; }
+            .books-grid { flex-direction: column; align-items: flex-start; }
+            
+            .timeline-stages { grid-template-columns: 1fr; gap: 32px; padding-left: 20px; border-left: 1px solid var(--main); margin-left: 6px; }
+            .timeline-track { display: none; }
+            .stage-node { position: absolute; left: -28px; top: 0; margin: 0; background: var(--surface); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="header-logo">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+                    <path d="M8 12h8"></path>
+                </svg>
+                Nayesha / <span>snug.</span>
+            </a>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <section class="section-block">
+            <div class="hero-editorial">
+                <h1 class="hero-title reveal">Because finding a seat shouldn't be work.</h1>
+                <div class="kicker reveal">01. Overview</div>
+                <p class="body-lg reveal">Snug is a high-fidelity iOS app and vendor dashboard ecosystem that lets students and remote workers find, browse, and claim seats at nearby cafés and libraries in under 60 seconds. Born out of personal campus frustration, an 8-month design process, and 13+ user testing sessions, Snug bridges the gap between unpredictable physical environments and the confidence to commit to a space before you ever leave the door.</p>
+                
+                <div class="meta-container reveal">
+                    <div class="meta-item">Project: <strong>snug.</strong></div>
+                    <div class="meta-item">Type: <strong>Mobile App + Vendor Dashboard</strong></div>
+                    <div class="meta-item">Tools: <strong>Figma</strong></div>
+                    <div class="meta-item">Year: <strong>2026</strong></div>
+                </div>
+            </div>
+
+            <div class="grid-4 reveal">
+                <img src="splash.png" alt="Snug Splash Screen Background">
+                <img src="home.png" alt="Snug Live Simulated Map Home Screen">
+                <img src="history.png" alt="Snug Stacked Ticket History Screen">
+                <img src="bbseats.png" alt="Snug Seat Details View">
+            </div>
+        </section>
+
+
+        <section class="section-block">
+            <div style="text-align: center; margin-bottom: 60px;" class="reveal">
+                <div class="kicker">02. The Problem</div>
+                <h2 class="hero-title" style="font-size: clamp(2.5rem, 4vw, 3.5rem); margin-bottom: 0;">Breaking Navigational<br>Friction</h2>
+            </div>
+
+            <div class="grid-half" style="margin-bottom: 60px;">
+                <div class="reveal">
+                    <h3 style="margin-bottom: 16px; font-size: 1.15rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--mute);">The Current Reality</h3>
+                    <p class="body-md" style="font-size: 1rem; color: #444;">Shared spaces—cafés, libraries, and coworking spots—are unpredictable by nature. Availability shifts by the minute, meaning there is no way to know what you're walking into before you arrive. Students and remote workers spend 6 to 18 minutes per session searching for available seating, and a staggering 70% walk into a space, find it full, and leave without sitting down.</p>
+                </div>
+                <div class="reveal">
+                    <h3 style="margin-bottom: 16px; font-size: 1.15rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--mute);">Moving the Window</h3>
+                    <p class="body-md" style="font-size: 1rem; color: #444;">The emotional language across user interviews was strikingly consistent: seat searching was described as "draining," "demotivating," and "stressful". To solve this, I shifted the problem earlier in the journey—focusing entirely on the critical decision window <em>before</em> arrival. The goal was to provide an option reliable enough to act on, yet simple enough not to create new friction.</p>
+                </div>
+            </div>
+
+            <div class="card-surface reveal" style="padding: 40px; text-align: center; background: var(--surface);">
+                <h4 class="kicker" style="margin-bottom: 12px; font-size: 0.75rem;">The Initial Design Question</h4>
+                <p class="body-lg" style="font-family: 'Inter', sans-serif; font-style: italic; font-weight: 500; font-size: clamp(1.2rem, 2vw, 1.5rem); line-height: 1.5; max-width: 800px; margin: 0 auto; color: var(--main);">
+                    "How might we give students and remote workers visibility into seat availability—before they ever leave the door?"
+                </p>
+            </div>
+        </section>
+
+
+        <section class="section-block">
+            <div style="text-align: center; margin-bottom: 120px;" class="reveal">
+                <div class="kicker">03. PROCESS</div>
+                <h2 class="hero-title" style="font-size: clamp(2.5rem, 4vw, 3.5rem); margin-bottom: 0;">Contextual Inquiries<br>& Real Constraints</h2>
+            </div>
+
+            <div class="asym-split" style="margin-bottom: 80px;">
+                <div class="split-left reveal">
+                    <h3 style="font-size: 1.25rem; font-weight: 500;">Challenges</h3>
+                </div>
+                <div class="split-right grid-half reveal">
+                    <div>
+                        <h4 style="margin-bottom: 16px; font-size: 1.15rem;">Talking to Real People</h4>
+                        <p class="body-md" style="font-size: 1rem; color: #444;">I conducted 10 interviews and 5 usability sessions around UBC. Seat searching emerged as a routine source of stress, described by users as draining and demotivating.</p>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 16px; font-size: 1.15rem;">The Other Side of the Problem</h4>
+                        <p class="body-md" style="font-size: 1rem; color: #444;">I interviewed café managers at Kafka and Blue Chip. They revealed that guaranteed seating options create massive operational risks during peak class hours.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="asym-split" style="margin-bottom: 120px;">
+                <div class="split-left reveal">
+                    <h3 style="font-size: 1.25rem; font-weight: 500;">Initial Assumptions</h3>
+                </div>
+                <div class="split-right reveal">
+                    <h4 style="margin-bottom: 16px; font-size: 1.25rem;">Shifting the Journey Window</h4>
+                    <p class="body-md" style="font-size: 1.05rem; color: #444;">Instead of fixing frustration after it happens, we assumed we could move the problem earlier in the journey. The system had to be reliable enough for users to act on, yet simple enough to avoid creating new friction for busy café vendors.</p>
+                    
+                    <h4 style="margin-top: 40px; margin-bottom: 16px; font-size: 1.15rem;">Core Parameters</h4>
+                    <ul class="bullet-list" style="font-size: 1rem; color: #444;">
+                        <li><strong>Pre-Arrival Visibility:</strong> Shifting the decision window to before the user leaves home.</li>
+                        <li><strong>Dual-User Design:</strong> Solving for both the student looking to work and the business owner's margin.</li>
+                        <li><strong>No Static Forecasts:</strong> Avoiding baseline data that fails to adapt to rapid, real-time seat turnover.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card-surface reveal">
+                <h3 style="text-align: center; margin-bottom: 60px; font-size: 1.25rem; font-weight: 600;">Process Overview</h3>
+                
+                <div class="timeline-container">
+                    <div class="timeline-track"></div>
+                    <div class="timeline-stages">
+                        
+                        <div class="stage">
+                            <div class="stage-title">Kickoff</div>
+                            <div class="stage-node"></div>
+                            <ul class="stage-list">
+                                <li>Brief</li>
+                                <li>Handover</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="stage">
+                            <div class="stage-title">Discovery 1</div>
+                            <div class="stage-node"></div>
+                            <ul class="stage-list">
+                                <li>Lean UX canvas</li>
+                                <li>Business case</li>
+                                <li>Strategy</li>
+                                <li>Lo-fi solutions</li>
+                            </ul>
+                        </div>
+
+                        <div class="stage">
+                            <div class="stage-title">Discovery 2</div>
+                            <div class="stage-node"></div>
+                            <ul class="stage-list">
+                                <li>UX design</li>
+                                <li>Feasibility analysis</li>
+                            </ul>
+                        </div>
+
+                        <div class="stage">
+                            <div class="stage-title">Closing</div>
+                            <div class="stage-node"></div>
+                            <ul class="stage-list">
+                                <li>Recommendations</li>
+                                <li>Decision making</li>
+                            </ul>
+                        </div>
+
+                        <div class="stage">
+                            <div class="stage-title">Production</div>
+                            <div class="stage-node"></div>
+                            <ul class="stage-list">
+                                <li>Figma Prototype</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section class="section-block" style="border-bottom: none;">
+            <div style="text-align: center; margin-bottom: 120px;" class="reveal">
+                <div class="kicker">04. DESIGN DISCOVERY</div>
+                <h2 class="hero-title" style="font-size: clamp(2.5rem, 4vw, 3.5rem); margin-bottom: 0;">The Art of Reduction</h2>
+            </div>
+
+            <div class="asym-split reveal">
+                <div class="split-left">
+                    <h3>Discovery<br>Sprint 1</h3>
+                </div>
+                <div class="split-right">
+                    <p class="body-lg">I built an interactive prototype called Spotly to give users live visibility. We ran 5 usability sessions, assigning the exact same task: find a café, check seat availability, and claim a spot.</p>
+                </div>
+            </div>
+
+            <div class="asym-split reveal">
+                <div class="split-left">
+                    <h3 style="font-weight: 500;">UX Outcomes</h3>
+                </div>
+                <div class="split-right">
+                    <ul class="bullet-list">
+                        <li><strong>Immediate Comprehension:</strong> All 5 participants understood the core concept instantly without guidance.</li>
+                        <li><strong>The Commitment Gap:</strong> Users hesitated 4 to 7 seconds before pressing claim, exposing a deep lack of system trust.</li>
+                        <li><strong>Subtle Failures:</strong> Relying purely on color variations meant users could not easily tell available seats from limited ones.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="asym-split reveal">
+                <div class="split-left">
+                    <h3 style="font-weight: 500;">Key Insights</h3>
+                </div>
+                <div class="split-right">
+                    <h4 style="font-size: 1.15rem; font-weight: 600; margin-bottom: 12px;">The Routine Friction is Widespread</h4>
+                    <ul class="bullet-list">
+                        <li><strong>70%</strong> of users walk into a space, see it full, and instantly walk back out.</li>
+                        <li>Users had already entirely warped their daily habits around avoiding peak classroom hours.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="asym-split">
+                <div class="split-left reveal">
+                    <h3 style="font-weight: 500;">Hypotheses</h3>
+                </div>
+                <div class="split-right grid-half reveal">
+                    
+                    <div class="card-surface">
+                        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        <h4 class="card-title">Busy Lives & Distractions</h4>
+                        <p class="card-text">Users try to check availability while walking or multi-tasking, meaning heavy layouts or floor plan maps add unnecessary cognitive steps.</p>
+                    </div>
+
+                    <div class="card-surface">
+                        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        <h4 class="card-title">Lack of Financial Literacy</h4>
+                        <p class="card-text">Without a crystal clear explanation of deposit mechanics, users treat monetary commitments as financial penalties.</p>
+                    </div>
+
+                    <div class="card-surface">
+                        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4v16"></path><path d="M2 8h18a2 2 0 0 1 2 2v10"></path><path d="M2 17h20"></path><path d="M6 8v9"></path></svg>
+                        <h4 class="card-title">Procrastination Dynamics</h4>
+                        <p class="card-text">Selecting exact arrival durations introduces sudden friction at the point of commitment, leading to immediate app abandonment.</p>
+                    </div>
+
+                    <div class="card-surface">
+                        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                        <h4 class="card-title">Inadequate Seating Tools</h4>
+                        <p class="card-text">Generic maps show geographic points but entirely fail to contextualize critical environmental properties like noise levels or charging access.</p>
+                    </div>
+
+                    <div class="card-surface">
+                        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="15" x2="16" y2="15"></line><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                        <h4 class="card-title">Emotional Commuting</h4>
+                        <p class="card-text">The immediate stress of losing a seat details your workflow momentum before you start, yielding complete resignation.</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="asym-split">
+                <div class="split-left reveal">
+                    <h3 style="font-weight: 500;">UX Strategy</h3>
+                </div>
+                <div class="split-right grid-half reveal">
+                    
+                    <div class="card-blue">
+                        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4"></path><path d="M12 18v4"></path><path d="M4.93 4.93l2.83 2.83"></path><path d="M16.24 16.24l2.83 2.83"></path><path d="M2 12h4"></path><path d="M18 12h4"></path><path d="M4.93 19.07l2.83-2.83"></path><path d="M16.24 7.76l2.83-2.83"></path></svg>
+                        <h4 class="card-title">Leverage Behavioural Science</h4>
+                        <p class="card-text">Integrate behavioral framing to address the confidence gap. By clearly showing ticket confirmations on a singular summary card, we establish mutual trust upfront.</p>
+                    </div>
+
+                    <div class="card-blue">
+                        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+                        <h4 class="card-title">Bite-Sized Workspace Wellness</h4>
+                        <p class="card-text">Instead of demanding complex structural interactions, we break down seat scanning into simple, descriptive micro-steps so users can skip the visual chaos.</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+     <section class="section-block" style="border-top: 1px solid var(--border);">
+    
+    <div style="text-align: center; margin-bottom: 80px;" class="reveal">
+        <div class="kicker" style="margin-bottom: 8px;">05. Design Concepts</div>
+        <h2 class="hero-title" style="font-size: clamp(2.5rem, 4vw, 3.5rem); margin-bottom: 16px;">Iteration 01 : Spotly</h2>
+        <p class="body-lg" style="max-width: 680px; margin: 0 auto; color: var(--mute); font-size: 1.15rem;">I brought my vision to life with a lo-fi design iteration, offering a skeleton concept that would later help Snug to be contructed and viable.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; align-items: start;">
+        
+        <div class="reveal" style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+            <div style="margin-bottom: 40px; min-height: 180px;">
+                <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 12px;">The Baseline Concept</h3>
+                <p class="body-md" style="font-size: 0.95rem; color: #444; line-height: 1.6; margin: 0;">I incorporated real-time seating availability in a map form assuming it would help users truly see what seat they'd choose and where it would be in the place of their choice. At this point in my iteration there was no separate screen for confirmation of the user booking a seat.</p>
+            </div>
+            <img src="spotly-concept1.png" alt="Spotly Baseline Concept" style="width: 100%; aspect-ratio: 9/19; object-fit: cover; object-position: top; border-radius: 32px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.03); display: block; background: var(--surface);">
+        </div>
+
+        <div class="reveal" style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+            <div style="margin-bottom: 40px; min-height: 180px;">
+                <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 12px;">The Seat Guarantee</h3>
+                <p class="body-md" style="font-size: 0.95rem; color: #444; line-height: 1.6; margin: 0;">Aimed to make pre-arrival check-ins an absolute breeze. This model allowed users to review micro-occupancy charts for each café or library zone in just a few seconds. By distilling complex, shifting seat data into bite-sized visual statuses, it made picking a specific workspace layout highly engaging and predictable.</p>
+            </div>
+            <img src="spotly-concept2.png" alt="Spotly Seat Guarantee" style="width: 100%; aspect-ratio: 9/19; object-fit: cover; object-position: top; border-radius: 32px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.03); display: block; background: var(--surface);">
+        </div>
+
+        <div class="reveal" style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+            <div style="margin-bottom: 40px; min-height: 180px;">
+                <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 12px;">The Micro-Booking Flow</h3>
+                <p class="body-md" style="font-size: 0.95rem; color: #444; line-height: 1.6; margin: 0;">I reimagined the entire space-seeking routine as a dynamic, commitment-driven journey. By adding explicit hold limits, I encouraged students to lock down a zone seamlessly before leaving campus, eliminating the anxiety of walking into a completely packed venue.</p>
+            </div>
+            <img src="spotly-concept3.png" alt="Spotly Micro-Booking Flow" style="width: 100%; aspect-ratio: 9/19; object-fit: cover; object-position: top; border-radius: 32px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.03); display: block; background: var(--surface);">
+        </div>
+
+    </div>
+
+    <div class="reveal" style="text-align: center; margin-top: 100px;">
+        <h3 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 20px; letter-spacing: -0.01em;">Identifying the Friction</h3>
+        <p class="body-lg" style="max-width: 760px; margin: 0 auto; color: #444; font-size: 1.1rem; line-height: 1.6;">
+            After putting these initial concepts in front of users, critical usability roadblocks immediately emerged. While the baseline map provided speed, relying purely on color variations meant users couldn't easily distinguish between available and limited seating. Furthermore, the micro-booking flow exposed a deep lack of system trust—users hesitated for 4 to 7 seconds before committing to a spot. We realized that generic maps failed to provide the necessary environmental context, pushing us to rethink how we display noise levels, outlet access, and absolute availability before moving into high-fidelity production.
+        </p>
+    </div>
+
+</section>
+
+<section class="section-block" style="border-top: 1px solid var(--border);">
+    
+    <div style="text-align: center; margin-bottom: 80px;" class="reveal">
+        <div class="kicker" style="margin-bottom: 8px;">06. Design Enhancement</div>
+        <h2 class="hero-title" style="font-size: clamp(2.5rem, 4vw, 3.5rem); margin-bottom: 16px; letter-spacing: -0.02em;">From Friction to Flow</h2>
+    </div>
+
+    <div class="asym-split reveal" style="margin-bottom: 80px;">
+        <div class="split-left">
+            <h3 style="font-size: 1.5rem; font-weight: 600; letter-spacing: -0.01em;">The Snug Pivot</h3>
+        </div>
+        <div class="split-right">
+            <p class="body-lg" style="margin-bottom: 0;">
+                In this sprint, we set out to resolve the critical usability failures of the Spotly prototype. We realized that while speed was important, a baseline map with color-coded markers wasn't enough to build user trust. Snug was constructed to bridge this gap by transforming unpredictable floor plans into a baseline of certainty—providing deep environmental context, explicit booking contracts, and a seamless transition from search to arrival.
+            </p>
+        </div>
+    </div>
+
+    <div class="asym-split reveal">
+        <div class="split-left">
+            <h3 style="font-size: 1.5rem; font-weight: 600; letter-spacing: -0.01em;">Problem to Solution Toolkit</h3>
+        </div>
+        <div class="split-right">
+            <p class="body-md" style="margin-bottom: 16px; color: #444;">
+                I compiled a direct mapping of the UX roadblocks we identified in our usability sessions to the high-fidelity solutions we implemented in Snug. This framework served as our guiding resource for the final interface.
+            </p>
+
+            <div class="accordion-category">Solving System Trust & Ambiguity</div>
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <span class="accordion-icon">+</span>
+                        The 4-to-7 Second Hesitation
+                    </div>
+                    <div class="accordion-content">
+                        <strong>Snug Solution: The Active Summary Card.</strong> By integrating behavioral framing, we created a singular, high-visibility digital ticket that establishes mutual trust upfront. This transparent contract explicitly validates the user's booking choices, eliminating hesitation before commitment.
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <span class="accordion-icon">+</span>
+                        Inadequate Seating Tools
+                    </div>
+                    <div class="accordion-content">
+                        <strong>Snug Solution: Contextual Environmental Filters.</strong> Moving past generic geographic points, the Snug map contextualizes critical properties. Users can now filter specifically by noise levels, lighting, and charging outlet density before making a decision.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-category">Solving Busy Lifestyles & Procrastination</div>
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <span class="accordion-icon">+</span>
+                        Complex Arrival Durations
+                    </div>
+                    <div class="accordion-content">
+                        <strong>Snug Solution: Streamlined Buffer Windows.</strong> Selecting exact arrival minutes introduced sudden friction at the point of commitment. We replaced this with a simplified, flat hold-timer that gives users a standard grace period to reach the venue without doing mental math.
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <span class="accordion-icon">+</span>
+                        Emotional Commuting
+                    </div>
+                    <div class="accordion-content">
+                        <strong>Snug Solution: Guaranteed Hold States.</strong> To prevent the immediate stress of losing a seat from derailing workflow momentum, Snug's backend syncs directly with the vendor dashboard. When a seat is claimed in the app, it is instantly removed from the public pool.
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <span class="accordion-icon">+</span>
+                        Lack of Financial Literacy
+                    </div>
+                    <div class="accordion-content">
+                        <strong>Snug Solution: Transparent Deposit Mechanics.</strong> Without a crystal clear explanation, users treated monetary commitments as penalties. The new booking flow breaks down the deposit structure in plain text, assuring users that their hold fee is applied directly to their coffee purchase.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</section>
+
+<section class="section-block">
+    
+    <div style="text-align: center; margin-bottom: 80px;" class="reveal">
+        <div class="kicker" style="margin-bottom: 8px;">Shaping the Solution with</div>
+        <h2 class="hero-title" style="font-size: clamp(3rem, 5vw, 4.5rem); margin-bottom: 0; letter-spacing: -0.03em;">snug.</h2>
+    </div>
+
+    <div class="asym-split reveal">
+        <div class="split-left">
+            <h3 style="font-size: 1.25rem; font-weight: 500;">At a Glance</h3>
+        </div>
+        
+        <div class="split-right">
+            <p class="body-lg" style="margin-bottom: 24px;">
+                <strong>snug.</strong> is designed for today's unpredictable campus environments, where every minute spent searching for a seat is a minute lost from deep work. It cuts through the navigational noise, acting as a <strong>live environmental dashboard</strong> where users can spend just <strong>30–60 seconds</strong> securing their workspace before leaving their dorm or classroom.
+            </p>
+            
+            <p class="body-lg" style="margin-bottom: 40px;">
+                Our goal is to create an experience that requires minimal cognitive load from users, delivering only the most <strong>essential contextual data</strong> and <strong>guaranteed booking mechanics</strong> to empower confident commuting decisions.
+            </p>
+
+            <h4 style="font-size: 1.15rem; font-weight: 600; margin-bottom: 16px;">Key Features</h4>
+            <ul class="bullet-list" style="margin-left: 24px;">
+                <li><strong>Instant Visibility:</strong> See exactly which venues have seating before leaving your current location.</li>
+                <li><strong>Contextual Filtering:</strong> Sort spaces by critical needs like noise levels, outlet availability, and natural lighting.</li>
+                <li><strong>Guaranteed Holds:</strong> Secure a seat via a digital ticket, instantly updating the vendor's dashboard capacity.</li>
+                <li><strong>Flat Grace Periods:</strong> Eliminates complicated ETA math with standard 15-minute travel buffer windows.</li>
+                <li><strong>Transparent Deposits:</strong> Clear financial mechanics where hold deposits convert directly to café credit upon arrival.</li>
+            </ul>
+        </div>
+    </div>
+
+</section>
+
+<section class="section-block">
+    
+    <div style="text-align: center; margin-bottom: 120px;" class="reveal">
+        <div class="kicker" style="margin-bottom: 8px;">08. The Interface</div>
+        <h2 class="hero-title" style="font-size: clamp(2.5rem, 4vw, 3.5rem); margin-bottom: 0; letter-spacing: -0.02em;">Anatomy of snug.</h2>
+    </div>
+
+    <div class="reveal" style="display: grid; grid-template-columns: 1fr 2.2fr; gap: 80px; align-items: center; margin-bottom: 80px; padding-bottom: 80px; border-bottom: 1px solid var(--border);">
+        <div style="width: 100%; max-width: 320px; margin: 0 auto;">
+            <img src="snug-home.png" alt="Snug Contextual Map Screen" style="width: 100%; aspect-ratio: 9/19; object-fit: cover; border-radius: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); display: block; background: var(--surface);">
+        </div>
+        <div>
+            <h2 style="font-size: 2.8rem; font-weight: 600; letter-spacing: -0.03em; margin-bottom: 24px;">The Contextual Map</h2>
+            <p class="body-lg" style="margin-bottom: 40px; color: #333; max-width: 600px;">
+                I transformed the standard, stressful campus map into a live environmental dashboard. This acts as the user's home base, instantly scanning nearby spaces and filtering out the noise to show only what matters: where they can sit right now.
+            </p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                <div>
+                    <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--main);">Functional & Visual Rationale</h4>
+                    <p class="body-md" style="font-size: 0.95rem; color: #555; margin: 0;">By stepping away from ambiguous color-coded dots, I prioritized absolute capacity metrics. The interface is visually lightweight to prevent cognitive overload, ensuring users can process availability while walking or multi-tasking.</p>
+                </div>
+                <div>
+                    <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--main);">Core Features</h4>
+                    <p class="body-md" style="font-size: 0.95rem; color: #555; margin: 0;"><strong>Live Seat Tracking:</strong> Real-time syncing with café vendor dashboards.<br><br><strong>Environmental Filters:</strong> Instantly sort by noise thresholds, outlet access, and lighting.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="reveal" style="display: grid; grid-template-columns: 1fr 2.2fr; gap: 80px; align-items: center; margin-bottom: 80px; padding-bottom: 80px; border-bottom: 1px solid var(--border);">
+        <div style="width: 100%; max-width: 320px; margin: 0 auto;">
+            <img src="snug-details.png" alt="Snug Venue Details Screen" style="width: 100%; aspect-ratio: 9/19; object-fit: cover; border-radius: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); display: block; background: var(--surface);">
+        </div>
+        <div>
+            <h2 style="font-size: 2.8rem; font-weight: 600; letter-spacing: -0.03em; margin-bottom: 24px;">Venue Insights</h2>
+            <p class="body-lg" style="margin-bottom: 40px; color: #333; max-width: 600px;">
+                Before committing to a commute, users need absolute confidence in their workspace. This screen breaks down the specific conditions of a chosen café or library zone in a matter of seconds.
+            </p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                <div>
+                    <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--main);">Functional & Visual Rationale</h4>
+                    <p class="body-md" style="font-size: 0.95rem; color: #555; margin: 0;">I designed this as a bite-sized "workspace wellness" check. Instead of dense paragraphs or complex floor plans, data is presented in scannable, modular cards so users can verify amenities without scrolling endlessly.</p>
+                </div>
+                <div>
+                    <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--main);">Core Features</h4>
+                    <p class="body-md" style="font-size: 0.95rem; color: #555; margin: 0;"><strong>Micro-Occupancy Charts:</strong> Visual breakdowns of busy zones vs. quiet zones.<br><br><strong>Amenity Breakdown:</strong> Clear iconography for Wi-Fi speed, outlets, and seating types.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="reveal" style="display: grid; grid-template-columns: 1fr 2.2fr; gap: 80px; align-items: center; margin-bottom: 80px; padding-bottom: 80px; border-bottom: 1px solid var(--border);">
+        <div style="width: 100%; max-width: 320px; margin: 0 auto;">
+            <img src="snug-booking.png" alt="Snug Booking Flow Screen" style="width: 100%; aspect-ratio: 9/19; object-fit: cover; border-radius: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); display: block; background: var(--surface);">
+        </div>
+        <div>
+            <h2 style="font-size: 2.8rem; font-weight: 600; letter-spacing: -0.03em; margin-bottom: 24px;">The Booking Flow</h2>
+            <p class="body-lg" style="margin-bottom: 40px; color: #333; max-width: 600px;">
+                The critical moment of commitment. I completely reimagined the space-seeking routine to eliminate the hesitation previously seen in the Spotly iteration, replacing ETA math with standardized buffer windows.
+            </p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                <div>
+                    <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--main);">Functional & Visual Rationale</h4>
+                    <p class="body-md" style="font-size: 0.95rem; color: #555; margin: 0;">To combat procrastination and financial anxiety, the layout uses clear, unambiguous typography to explain deposit mechanics. The design actively guides the user to the primary action button without visual distractions.</p>
+                </div>
+                <div>
+                    <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--main);">Core Features</h4>
+                    <p class="body-md" style="font-size: 0.95rem; color: #555; margin: 0;"><strong>Flat Buffer Windows:</strong> A standard grace period to arrive without mental math.<br><br><strong>Transparent Deposits:</strong> Clear phrasing ensuring the hold fee applies to café purchases.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="reveal" style="display: grid; grid-template-columns: 1fr 2.2fr; gap: 80px; align-items: center; margin-bottom: 80px; padding-bottom: 80px; border-bottom: 1px solid var(--border);">
+        <div style="width: 100%; max-width: 320px; margin: 0 auto;">
+            <img src="snug-ticket.png" alt="Snug Summary Card Screen" style="width: 100%; aspect-ratio: 9/19; object-fit: cover; border-radius: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); display: block; background: var(--surface);">
+        </div>
+        <div>
+            <h2 style="font-size: 2.8rem; font-weight: 600; letter-spacing: -0.03em; margin-bottom: 24px;">The Summary Card</h2>
+            <p class="body-lg" style="margin-bottom: 40px; color: #333; max-width: 600px;">
+                The ultimate solution to the system trust gap. This active ticket functions as a transparent, digital handshake between the student and the vendor, ensuring peace of mind during the commute.
+            </p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                <div>
+                    <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--main);">Functional & Visual Rationale</h4>
+                    <p class="body-md" style="font-size: 0.95rem; color: #555; margin: 0;">By visually framing the confirmation as a receipt or ticket, I leveraged behavioral familiarity. The high-contrast live timer ensures the user always knows exactly how much time they have to claim their spot.</p>
+                </div>
+                <div>
+                    <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--main);">Core Features</h4>
+                    <p class="body-md" style="font-size: 0.95rem; color: #555; margin: 0;"><strong>Digital Handshake:</strong> Instant confirmation establishing mutual trust.<br><br><strong>Live Hold Timer:</strong> A dynamic countdown preventing emotional commuting stress.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="reveal" style="display: grid; grid-template-columns: 1fr 2.2fr; gap: 80px; align-items: center; margin-bottom: 80px;">
+        <div style="width: 100%; max-width: 320px; margin: 0 auto;">
+            <img src="snug-history.png" alt="Snug Ticket History Screen" style="width: 100%; aspect-ratio: 9/19; object-fit: cover; border-radius: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); display: block; background: var(--surface);">
+        </div>
+        <div>
+            <h2 style="font-size: 2.8rem; font-weight: 600; letter-spacing: -0.03em; margin-bottom: 24px;">Ticket History</h2>
+            <p class="body-lg" style="margin-bottom: 40px; color: #333; max-width: 600px;">
+                A clean, accessible log of all past and present seating reservations, doubling as a hub for users to quickly rebook their favorite campus spots with a single tap.
+            </p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                <div>
+                    <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--main);">Functional & Visual Rationale</h4>
+                    <p class="body-md" style="font-size: 0.95rem; color: #555; margin: 0;">I designed this as an unobtrusive utility. The stacked card interface mirrors physical wallets, keeping active tickets distinctly separated from archived past data to maintain visual hierarchy and organization.</p>
+                </div>
+                <div>
+                    <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--main);">Core Features</h4>
+                    <p class="body-md" style="font-size: 0.95rem; color: #555; margin: 0;"><strong>Quick Access Rebooking:</strong> One-tap flows to secure previously visited locations.<br><br><strong>Receipt Tracking:</strong> A log of all past deposits and cafe spend metrics.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<section class="section-block" style="border-top: 1px solid var(--border);">
+
+    <div style="text-align: center; margin-bottom: 80px;" class="reveal">
+        <div class="kicker" style="margin-bottom: 8px;">09. Vendor Dashboard</div>
+        <h2 class="hero-title" style="font-size: clamp(2.5rem, 4vw, 3.5rem); margin-bottom: 16px; letter-spacing: -0.02em;">The Other Half of the Ecosystem</h2>
+        <p class="body-lg" style="max-width: 680px; margin: 0 auto; color: var(--mute); font-size: 1.15rem;">
+            Snug is a two-sided platform. For the live map to work perfectly for students, venue owners need a frictionless way to manage their capacity.
+        </p>
+    </div>
+
+    <div class="reveal" style="margin-bottom: 80px;">
+        <img src="snug-vendor-dash.png" alt="Snug Vendor Dashboard Interface" style="width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); display: block; background: var(--surface); border: 1px solid var(--border);">
+    </div>
+
+    <div class="asym-split reveal" style="margin-bottom: 0;">
+        <div class="split-left">
+            <h3 style="font-size: 1.5rem; font-weight: 600; letter-spacing: -0.01em;">Closing the Loop</h3>
+        </div>
+        
+        <div class="split-right">
+            <p class="body-lg" style="margin-bottom: 40px; color: #333;">
+                Without a reliable way for vendors to see upcoming arrivals and clear completed bookings, the student-facing map would instantly fall out of sync. I designed the Vendor Dashboard to be a low-effort control center that empowers café staff rather than burdening them.
+            </p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                <div>
+                    <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--main);">Functional Rationale</h4>
+                    <p class="body-md" style="font-size: 0.95rem; color: #555; margin: 0;">
+                        Café staff operate in a high-stress, fast-paced environment. I ensured the dashboard relies on high-contrast visual cues and large, tappable zones so baristas can update table statuses in a single glance and tap, without disrupting their primary workflow.
+                    </p>
+                </div>
+                <div>
+                    <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--main);">Core Features</h4>
+                    <ul class="bullet-list" style="margin-left: 20px; font-size: 0.95rem; color: #555; line-height: 1.6; padding: 0;">
+                        <li style="margin-bottom: 8px;"><strong>Live Floorplan View:</strong> Real-time status of every seat (open, reserved, occupied).</li>
+                        <li style="margin-bottom: 8px;"><strong>One-Tap Clearing:</strong> Instantly mark a table as available once a student leaves, syncing directly to the student app.</li>
+                        <li><strong>Incoming Queue:</strong> A clear chronological list of students who have secured a hold and are currently en route.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<section class="section-block" style="border-top: 1px solid var(--border); padding-top: 80px; margin-bottom: 80px;">
+    
+    <div class="asym-split reveal" style="align-items: start;">
+        
+        <div class="split-left">
+            <h2 style="font-size: clamp(2.5rem, 4vw, 3.5rem); font-weight: 600; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 24px;">New<br>Business<br>Potential<br>Unlocked</h2>
+        </div>
+        
+        <div class="split-right">
+            <p class="body-lg" style="margin-bottom: 40px; color: #333;">
+                I identified three key business opportunities that set this ecosystem apart, ensuring mutual value for both the students seeking space and the venues hosting them.
+            </p>
+
+            <div style="margin-bottom: 32px;">
+                <h4 style="font-size: 1.15rem; font-weight: 600; margin-bottom: 8px; color: var(--main);">Guaranteed Vendor Revenue</h4>
+                <p class="body-md" style="font-size: 0.95rem; color: #555; line-height: 1.6; margin: 0;">
+                    By implementing the hold deposit mechanic, cafes secure an upfront commitment. When the deposit converts to a coffee purchase upon arrival, it eliminates the problem of abandoned reservations and ensures that prime seating directly correlates to guaranteed sales.
+                </p>
+            </div>
+
+            <div style="margin-bottom: 32px;">
+                <h4 style="font-size: 1.15rem; font-weight: 600; margin-bottom: 8px; color: var(--main);">Predictable Foot Traffic</h4>
+                <p class="body-md" style="font-size: 0.95rem; color: #555; line-height: 1.6; margin: 0;">
+                    The Vendor Dashboard's incoming queue provides cafes with real-time forecasting. Venue managers can anticipate rushes before they happen, allowing them to optimize barista staffing and inventory perfectly during peak campus study hours.
+                </p>
+            </div>
+
+            <div>
+                <h4 style="font-size: 1.15rem; font-weight: 600; margin-bottom: 8px; color: var(--main);">Data-Driven Campus Planning</h4>
+                <p class="body-md" style="font-size: 0.95rem; color: #555; line-height: 1.6; margin: 0;">
+                    Over time, Snug aggregates macro-level seating data. This presents a massive B2B opportunity to partner with university administrations, providing them with heatmaps of campus utilization to inform future infrastructure and library developments.
+                </p>
+            </div>
+            
+        </div>
+    </div>
+
+</section>
+
+<section class="section-block" style="padding-bottom: 120px;">
+    
+    <div class="reveal" style="background-color: #1A1A1A; color: #FFFFFF; border-radius: 40px; padding: 80px 60px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
+        
+        <div style="text-align: center; max-width: 800px; margin: 0 auto 80px;">
+            <div style="font-size: 0.9rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #888; margin-bottom: 16px;">11. Closing</div>
+            <h2 style="font-size: clamp(2.5rem, 4vw, 3.5rem); font-weight: 600; letter-spacing: -0.02em; margin-bottom: 24px; color: #FFFFFF;">The Final Takeaway</h2>
+            <p style="font-size: 1.1rem; line-height: 1.6; color: #CCCCCC;">
+                Ultimately, transforming the flawed Spotly prototype into the robust Snug ecosystem taught me the true value of bridging the gap between digital interfaces and physical environments. While the baseline map concept provided a foundation, integrating real-time environmental context and explicit trust mechanics proved essential to moving this from a simple campus map to a viable, monetization-ready product.
+            </p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start;">
+            
+            <div>
+                <h3 style="font-size: 1.3rem; font-weight: 600; margin-bottom: 24px; color: #FFFFFF;">Winning Moments</h3>
+                <ul style="list-style: none; padding: 0; margin: 0; font-size: 1rem; line-height: 1.6; color: #CCCCCC;">
+                    <li style="margin-bottom: 20px; position: relative; padding-left: 20px;">
+                        <span style="position: absolute; left: 0; top: 0; color: #888;">•</span>
+                        <strong style="color: #FFFFFF;">Ecosystem Design:</strong> Successfully balanced the needs of high-stress student commuters with the fast-paced, high-volume workflows of café vendors.
+                    </li>
+                    <li style="margin-bottom: 20px; position: relative; padding-left: 20px;">
+                        <span style="position: absolute; left: 0; top: 0; color: #888;">•</span>
+                        <strong style="color: #FFFFFF;">Behavioral Framing:</strong> Applied psychological principles to eliminate the 4-to-7 second user hesitation, translating a digital interaction into guaranteed physical peace of mind.
+                    </li>
+                    <li style="position: relative; padding-left: 20px;">
+                        <span style="position: absolute; left: 0; top: 0; color: #888;">•</span>
+                        <strong style="color: #FFFFFF;">Scalable Architecture:</strong> Created a foundation that not only solves immediate user friction but opens up tangible B2B monetization pathways and data partnerships.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 style="font-size: 1.3rem; font-weight: 600; margin-bottom: 24px; color: #FFFFFF;">Lessons Learned</h3>
+                <ul style="list-style: none; padding: 0; margin: 0; font-size: 1rem; line-height: 1.6; color: #CCCCCC;">
+                    <li style="margin-bottom: 20px; position: relative; padding-left: 20px;">
+                        <span style="position: absolute; left: 0; top: 0; color: #888;">•</span>
+                        <strong style="color: #FFFFFF;">Testing Over Assumptions:</strong> Assuming users wanted "speed" over "context" in the first iteration led to high abandonment. I learned that real users need absolute certainty before committing to a commute.
+                    </li>
+                    <li style="margin-bottom: 20px; position: relative; padding-left: 20px;">
+                        <span style="position: absolute; left: 0; top: 0; color: #888;">•</span>
+                        <strong style="color: #FFFFFF;">Designing for the Real World:</strong> Digital products that interact with physical spaces must account for unpredictable human variables—like traffic, noise, and procrastination.
+                    </li>
+                    <li style="position: relative; padding-left: 20px;">
+                        <span style="position: absolute; left: 0; top: 0; color: #888;">•</span>
+                        <strong style="color: #FFFFFF;">Embracing the Pivot:</strong> Recognizing the flaws in the initial MVP and being willing to completely rethink the interaction model was difficult, but ultimately crucial for the success of the project.
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+</section>
+
+    </div>
+
+    <footer class="dark">
+        <div class="footer-wrapper">
+            <div class="footer-row">
+                <div class="footer-col-left">
+                    <a href="index.html" class="back-link">← Go Back Home</a>
+                    <h2>Up Next</h2>
+                </div>
+                <div class="footer-col-right books-grid">
+                    <a href="polar-panic.html" class="book footer-book">
+                        <img src="polar-book-back.png" class="layer back">
+                        <img src="book-pages.png" class="layer pages">
+                        <img src="polar-panic-cover.png" class="layer cover">
+                    </a>
+                    <a href="killjoys.html" class="book footer-book">
+                        <img src="killjoys-book-back.png" class="layer back">
+                        <img src="book-pages.png" class="layer pages">
+                        <img src="killjoys-cover.png" class="layer cover">
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-row">
+                <div class="footer-col-left">
+                    <h3>Let's Connect</h3>
+                </div>
+                <div class="footer-col-right contact-list">
+                    <a href="#" class="contact-link">
+                        <span class="contact-text">Email</span> 
+                        <span class="contact-arrow">↗</span>
+                    </a>
+                    <a href="#" class="contact-link">
+                        <span class="contact-text">LinkedIn</span> 
+                        <span class="contact-arrow">↗</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2026 All rights reserved</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px 0px -12% 0px', 
+                threshold: 0.02
+            };
+
+            const revealCallback = (entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target); 
+                    }
+                });
+            };
+
+            const observer = new IntersectionObserver(revealCallback, observerOptions);
+            const revealElements = document.querySelectorAll('.reveal');
+            revealElements.forEach(el => observer.observe(el));
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const accordionHeaders = document.querySelectorAll('.accordion-header');
+            
+            accordionHeaders.forEach(header => {
+                header.addEventListener('click', () => {
+                    const currentItem = header.parentElement;
+                    const isActive = currentItem.classList.contains('active');
+                    
+                    document.querySelectorAll('.accordion-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    if (!isActive) {
+                        currentItem.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

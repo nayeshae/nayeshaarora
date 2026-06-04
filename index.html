@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creator Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- BASE STYLES --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --bg-color: #F5F5F3; --text-main: #111111; --border-color: #dcdcdc; }
+        
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            padding-bottom: 120px; 
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 1. ULTRA-SMOOTH GLIDE REVEAL */
+        .reveal {
+            opacity: 0;
+            transform: translateY(60px); 
+            transition: opacity 1.6s cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 1.6s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 2. PREMIUM CONNECT LINK HOVER EFFECTS */
+        .connect-link {
+            display: flex;
+            justify-content: space-between; /* Anchors text left, arrow right */
+            align-items: center;
+            color: var(--main, #111);
+            text-decoration: none;
+            padding: 20px 0;
+            font-size: 1rem;
+            font-weight: 500;
+            /* Only color transitions on the parent */
+            transition: color 0.4s ease;
+            cursor: pointer;
+        }
+
+        .connect-link:hover {
+            color: #888888;
+        }
+
+        .connect-text {
+            /* Text gets its own transition to slide right */
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .connect-link:hover .connect-text {
+            transform: translateX(16px);
+        }
+
+        .connect-arrow {
+            display: inline-block;
+            font-size: 1.1em;
+            /* Arrow pivots in place */
+            transform-origin: center;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .connect-link:hover .connect-arrow {
+            /* Rotates perfectly into a right arrow */
+            transform: rotate(45deg); 
+        }
+        
+        a { text-decoration: none; color: inherit; }
+        .container { max-width: 1140px; margin: 0 auto; padding: 0 5vw; }
+
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 60px 0 80px 0; }
+        .nav-left { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.01em; }
+        .nav-left span { color: #888; font-weight: 400; }
+        .nav-right { display: flex; align-items: center; gap: 24px; font-size: 0.95rem; font-weight: 600; }
+        .btn-outline { background: white; border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 40px; }
+        .status { color: #2E8B57; display: flex; align-items: center; gap: 8px; }
+        .dot { width: 6px; height: 6px; background-color: #2E8B57; border-radius: 50%; }
+        
+        .hero { margin-bottom: 100px; max-width: 900px; }
+        .hero h1 { font-size: clamp(1.5rem, 3.3vw, 3rem); font-weight: 500; line-height: 1.15; letter-spacing: -0.03em; }
+
+        .case-studies { margin-bottom: 50px; max-width: 800px; }
+        .case-studies h3 { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 15px; }
+        .case-studies p { font-size: 1.05rem; line-height: 1.6; color: #555; }
+
+        /* --- THE GRID --- */
+        .grid-wrapper {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 140px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: minmax(300px, 420px) minmax(300px, 420px);
+            gap: 80px 5vw;
+            justify-content: center;
+        }
+
+        /* --- THE MASTER FRAME IMAGE STACK --- */
+        .book-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 457 / 655; 
+            perspective: 2000px; 
+            cursor: pointer;
+        }
+
+        .book-container > img:first-child {
+            filter: drop-shadow(0px 30px 60px rgba(0,0,0,0.18)) drop-shadow(0px 12px 24px rgba(0,0,0,0.12));
+        }
+
+        .book-layer {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain; 
+        }
+
+        .hinged-cover {
+            transform-origin: left center;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.1), filter 0.6s ease;
+            z-index: 3;
+        }
+
+        .book-container:hover .hinged-cover {
+            transform: rotateY(-22deg);
+            filter: drop-shadow(15px 10px 15px rgba(0,0,0,0.15));
+        }
+
+        .book-container:hover {
+            transform: translateY(-4px);
+            transition: transform 0.5s ease;
+        }
+
+        /* --- BOTTOM SECTION --- */
+        .row { display: grid; grid-template-columns: 250px 1fr; gap: 40px; padding: 60px 0; border-top: 1px solid var(--border-color); }
+        .row h2 { font-size: 1.4rem; font-weight: 500; letter-spacing: -0.02em; }
+        .row-content { font-size: 1.15rem; line-height: 1.6; max-width: 650px; color: #333;}
+        .row-content p { margin-bottom: 20px; }
+        .link-list { list-style: none; width: 100%; }
+        .link-list li { border-bottom: 1px solid var(--border-color); }
+        .link-list li:first-child { border-top: 1px solid var(--border-color); }
+
+        @media (max-width: 900px) {
+            .grid { grid-template-columns: 1fr; max-width: 500px; }
+            .row { grid-template-columns: 1fr; padding: 40px 0; gap: 15px; }
+            .nav-right { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <nav>
+            <div class="nav-left"><strong>Nayesha Arora</strong> <span>— Interaction Design </span></div>
+            <div class="nav-right">
+                <a href="#" class="btn-outline">Get in Touch</a>
+                <div class="status"><span class="dot"></span> Open to New Opportunities</div>
+            </div>
+        </nav>
+
+        <section class="hero reveal">
+            <h1>I build interfaces that breathe. By fusing UX strategy with game-design principles, I create web experiences that are truly immersive.</h1>
+        </section>
+
+        <section class="case-studies reveal">
+            <h3>My Projects</h3>
+            <p><strong>Heads up!</strong> These case studies are a bit lengthy. I share a lot about my approach from research and process to various iterations. Thanks for stopping by—I hope you find something useful.</p>
+        </section>
+
+        <section class="grid-wrapper">
+            <div class="grid">
+                
+                <a href="snug.html" class="reveal" style="text-decoration: none; display: block;">
+                    <div class="book-container">
+                        <img src="book-back-pink.png" class="book-layer" style="z-index: 1;" alt="Pink Back Cover">
+                        <img src="book-pages.png" class="book-layer" style="z-index: 2;" alt="Book Pages">
+                        <img src="snug-cover.png" class="book-layer hinged-cover" alt="Snug Case Study Cover">
+                    </div>
+                </a>
+
+                <a href="polar-panic.html" class="reveal" style="text-decoration: none; display: block;">
+                    <div class="book-container">
+                        <img src="polar-book-back.png" class="book-layer" style="z-index: 1;" alt="Polar Back Cover">
+                        <img src="book-pages.png" class="book-layer" style="z-index: 2;" alt="Book Pages">
+                        <img src="polar-panic-cover.png" class="book-layer hinged-cover" alt="Polar Panic Case Study Cover">
+                    </div>
+                </a>
+
+                <a href="nokino.html" class="reveal" style="text-decoration: none; display: block;">
+                    <div class="book-container">
+                        <img src="nokino-book-back.png" class="book-layer" style="z-index: 1;" alt="Nokino Back Cover" onerror="this.src='https://via.placeholder.com/457x655/B9B4E8/B9B4E8?text=Nokino+Back'">
+                        <img src="book-pages.png" class="book-layer" style="z-index: 2;" alt="Book Pages">
+                        <img src="nokino-cover.png" class="book-layer hinged-cover" alt="Nokino Case Study Cover" onerror="this.src='https://via.placeholder.com/457x655/B9B4E8/111111?text=Nokino+Cover'">
+                    </div>
+                </a>
+
+                <a href="killjoys.html" class="reveal" style="text-decoration: none; display: block;">
+                    <div class="book-container">
+                        <img src="killjoys-book-back.png" class="book-layer" style="z-index: 1;" alt="Killjoys Back Cover" onerror="this.src='https://via.placeholder.com/457x655/222222/222222?text=Back+Cover'">
+                        <img src="book-pages.png" class="book-layer" style="z-index: 2;" alt="Book Pages">
+                        <img src="killjoys-cover.png" class="book-layer hinged-cover" alt="Killjoys Case Study Cover" onerror="this.src='https://via.placeholder.com/457x655/222222/ffffff?text=Coming+Soon'">
+                    </div>
+                </a>
+
+            </div>
+        </section>
+
+        <section class="bottom-section">
+            <div class="row reveal" style="border-top: none;">
+                <h2>Hello.</h2>
+                <div class="row-content"><p>I'm Nayesha Arora, I recently graduated from Emily Carr University. I specialize in Interaction and web design as well as making apps look and feel tactile.</p></div>
+            </div>
+            
+            <div class="row reveal" style="border-bottom: 1px solid var(--border-color);">
+                <h2>Let's Connect</h2>
+                <div class="row-content">
+                    <ul class="link-list">
+                        <li>
+                            <a href="#" class="connect-link">
+                                <span class="connect-text">Email</span> 
+                                <span class="connect-arrow">↗</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="connect-link">
+                                <span class="connect-text">LinkedIn</span> 
+                                <span class="connect-arrow">↗</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px 0px -10% 0px', 
+                threshold: 0.05
+            };
+
+            const revealCallback = (entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target); 
+                    }
+                });
+            };
+
+            const observer = new IntersectionObserver(revealCallback, observerOptions);
+            
+            const revealElements = document.querySelectorAll('.reveal');
+            revealElements.forEach(el => observer.observe(el));
+        });
+    </script>
+</body>
+</html>

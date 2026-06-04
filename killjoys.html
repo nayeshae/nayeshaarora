@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Killjoys | Nayesha Arora</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- BASE STYLES --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --bg-color: #F5F5F3; --text-main: #111111; --border-color: #dcdcdc; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-main); padding-bottom: 0; overflow-x: hidden; }
+        .container { max-width: 1140px; margin: 0 auto; padding: 0 5vw; }
+        a { text-decoration: none; color: #111; }
+
+        /* --- SMOOTH GLIDE REVEAL --- */
+        .reveal { 
+            opacity: 0; 
+            transform: translateY(60px); 
+            transition: opacity 1.6s cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 1.6s cubic-bezier(0.16, 1, 0.3, 1); 
+            will-change: opacity, transform; 
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* --- STICKY HEADER --- */
+        header { 
+            position: sticky; 
+            top: 0; 
+            background: rgba(245, 245, 243, 0.95); 
+            backdrop-filter: blur(8px);
+            padding: 32px 0; 
+            z-index: 100; 
+            border-bottom: none; 
+            width: 100%;
+        }
+        .header-container {
+            max-width: 1280px; 
+            margin: 0 auto; 
+            padding: 0 40px; 
+            display: flex;
+            align-items: center;
+        }
+        .header-logo {
+            font-size: 1.35rem; 
+            font-weight: 500; 
+            color: #888;
+            display: flex;
+            align-items: center;
+            gap: 14px; 
+            transition: color 0.2s;
+            letter-spacing: -0.01em;
+        }
+        .header-logo:hover { color: var(--text-main); }
+        .header-logo span { color: var(--text-main); font-weight: 700; }
+
+        /* --- SECTION STRUCTURE --- */
+        .section-block { padding: 120px 0; }
+        .asym-split { display: grid; grid-template-columns: 250px 1fr; gap: 40px; align-items: start; }
+        .grid-half { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; } 
+        .closing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; } 
+        .kicker { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #888; }
+        .short-line { border-top: 1px solid var(--border-color); width: 100%; margin-bottom: 80px; }
+
+        /* --- BIG OVERHEAD TITLE --- */
+        .overhead-title {
+            font-size: clamp(3rem, 6vw, 4.5rem); 
+            font-weight: 700; 
+            letter-spacing: -0.03em; 
+            text-align: center; 
+            color: #111; 
+            line-height: 1.1; 
+            margin-bottom: 80px;
+        }
+
+        /* --- TEXT BLOCKS --- */
+        .id-text-block h3, .closing-text-block h3 { font-size: 1.5rem; margin-bottom: 24px; font-weight: 600; letter-spacing: -0.01em;}
+        .id-text-block p, .closing-text-block p { font-size: 1.15rem; line-height: 1.6; color: #333; margin-bottom: 24px; }
+        .id-text-block ul, .closing-text-block ul { font-size: 1.1rem; line-height: 1.6; color: #333; margin-bottom: 0; padding-left: 1.2em; }
+        .id-text-block li, .closing-text-block li { margin-bottom: 16px; }
+        .id-text-block li:last-child, .closing-text-block li:last-child { margin-bottom: 0; }
+        .id-text-block strong, .closing-text-block strong { font-weight: 600; color: #111; }
+
+        /* --- COLOR CARD (10 SLIM PILLS) --- */
+        .color-card {
+            background: #111111;
+            border-radius: 20px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+        }
+        .color-pills-container {
+            display: flex;
+            gap: 6px; 
+            height: 220px; 
+            width: 100%;
+        }
+        .color-pill {
+            flex: 1;
+            border-radius: 60px;
+            cursor: default; 
+            transition: opacity 0.3s ease;
+        }
+        .color-pills-container:hover .color-pill:not(:hover) {
+            opacity: 0.3;
+        }
+        
+        /* APPLE-ESQUE GLASS PILL TOOLTIP */
+        .apple-cursor-pill {
+            position: fixed;
+            top: 0; left: 0;
+            background: rgba(255, 255, 255, 0.15);
+            -webkit-backdrop-filter: blur(24px); 
+            backdrop-filter: blur(24px); 
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            pointer-events: none; 
+            opacity: 0;
+            z-index: 9999;
+            transform: translate(-50%, -100%); 
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            letter-spacing: 0.02em;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            will-change: transform, top, left, opacity;
+        }
+        .apple-cursor-pill.visible {
+            opacity: 1;
+        }
+
+        /* --- TRUE EDITORIAL BOOK PHYSICS --- */
+        .flipbook-wrapper { display: flex; flex-direction: column; align-items: center; gap: 40px; width: 100%; margin-top: 40px; }
+        .book-presentation-bg { position: relative; background-color: #222222; width: 100%; max-width: 960px; padding: 60px 80px 40px 80px; border-radius: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 24px 48px rgba(0,0,0,0.08); perspective: 3000px; }
+        .nav-arrow { position: absolute; top: 45%; transform: translateY(-50%); width: 48px; height: 48px; border-radius: 50%; background: transparent; border: 1px solid rgba(255,255,255,0.25); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; z-index: 20; }
+        .nav-arrow:hover { border-color: #666; color: #666; }
+        .prev-arrow { left: 32px; }
+        .next-arrow { right: 32px; }
+        .hint-text { color: #777; font-size: 0.85rem; margin-top: 48px; letter-spacing: 0.01em; text-align: center; z-index: 10; }
+        .book-container { position: relative; width: 100%; max-width: 700px; aspect-ratio: 1190 / 842; transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); transform-style: preserve-3d; }
+        .shadow-caster { position: absolute; top: 0; height: 100%; background: transparent; box-shadow: 0 20px 40px rgba(0,0,0,0.5); z-index: -1; transition: left 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), border-radius 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .spine-center { position: absolute; left: 50%; top: 2px; bottom: 2px; width: 12px; transform: translateX(-50%); background: linear-gradient(to right, #ccc, #fdfdfd 20%, #e0e0e0 50%, #fdfdfd 80%, #ccc); border-radius: 6px; z-index: 1; opacity: 0; transition: opacity 0.5s ease; box-shadow: inset 0 0 10px rgba(0,0,0,0.1); }
+        .sheet { position: absolute; top: 0; right: 0; width: 50%; height: 100%; transform-style: preserve-3d; transform-origin: left center; transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); cursor: pointer; will-change: transform; }
+        .sheet.flipped { transform: rotateY(-180deg); }
+        .face { position: absolute; inset: 0; backface-visibility: hidden; background: #fff; }
+        .face.front { z-index: 2; border-radius: 0 12px 12px 0; }
+        .face.back { transform: rotateY(180deg); z-index: 1; border-radius: 12px 0 0 12px; }
+        .face img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        .face.front img { border-radius: 0 12px 12px 0; }
+        .face.back img { border-radius: 12px 0 0 12px; }
+        .lighting { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: multiply;}
+        .face.front .lighting { background: linear-gradient(to right, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.03) 12%, transparent 35%); border-radius: 0 12px 12px 0; }
+        .face.back .lighting { background: linear-gradient(to left, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.03) 12%, transparent 35%); border-radius: 12px 0 0 12px; }
+
+        /* --- FOOTER --- */
+        .dark { background: #1a1a1a; color: #fff; padding: 120px 0 60px; margin-top: 120px; }
+        .footer-wrapper { max-width: 1040px; margin: 0 auto; padding: 0 5vw; display: flex; flex-direction: column; gap: 80px; }
+        .footer-row { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; align-items: start; }
+        .back-link { font-size: 1.05rem; color: #999; font-weight: 500; transition: color 0.2s; margin-bottom: 40px; display: inline-block; }
+        .back-link:hover { color: #fff; }
+        .footer-col-left h2 { font-size: 3.5rem; font-weight: 600; letter-spacing: -0.03em; margin: 0; }
+        .books-grid { display: flex; gap: 40px; }
+        .book { position: relative; width: 240px; aspect-ratio: 457/655; perspective: 2000px; cursor: pointer; }
+        .layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+        .cover { transform-origin: left center; transition: transform 0.6s cubic-bezier(.17,.88,.32,1.1); z-index: 3; }
+        .book:hover .cover { transform: rotateY(-22deg); }
+        .book:hover { transform: translateY(-4px); transition: .5s; }
+        .footer-book .back { transform: translate(2px, 3px); clip-path: inset(0px); z-index: 1; }
+        .footer-book .pages { transform: translate(1px, 1.5px); z-index: 2; }
+        .footer-col-left h3 { font-size: 1.4rem; font-weight: 500; color: #fff; margin: 0; }
+        .contact-list { display: flex; flex-direction: column; width: 100%; max-width: 520px; }
+        
+        /* UPDATED: ANIMATED CONNECT LINKS FOR DARK FOOTER */
+        .contact-link { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 20px 0; 
+            border-bottom: 1px solid #333; 
+            font-size: 1.1rem; 
+            color: #ddd; 
+            transition: color 0.4s ease; 
+            cursor: pointer; 
+        }
+        .contact-link:first-child { padding-top: 0; }
+        .contact-link:hover { color: #fff; }
+        
+        .contact-text {
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .contact-link:hover .contact-text {
+            transform: translateX(16px);
+        }
+        
+        .contact-arrow {
+            display: inline-block;
+            font-size: 1.1em;
+            transform-origin: center;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .contact-link:hover .contact-arrow {
+            transform: rotate(45deg);
+        }
+
+        .footer-bottom { border-top: 1px solid #333; padding-top: 40px; color: #999; font-size: 0.9rem; }
+
+        @media (max-width: 900px) {
+            .asym-split { grid-template-columns: 1fr; gap: 24px; }
+            .grid-half, .closing-grid { grid-template-columns: 1fr; gap: 40px; align-items: start; } 
+            .footer-row { grid-template-columns: 1fr; gap: 40px; }
+            .footer-wrapper { gap: 60px; }
+            .books-grid { flex-direction: column; align-items: flex-start; }
+            .book-presentation-bg { padding: 40px 20px 80px 20px; } 
+            .nav-arrow { top: auto; bottom: 24px; transform: none; }
+            .prev-arrow { left: calc(50% - 70px); }
+            .next-arrow { right: calc(50% - 70px); }
+            .hint-text { margin-top: 32px; margin-bottom: 24px; }
+            .color-pills-container { height: 160px; } 
+        }
+    </style>
+</head>
+<body>
+
+    <!-- REFINED APPLE-STYLE GLASS CURSOR PILL TOOLTIP -->
+    <div class="apple-cursor-pill" id="hex-tooltip">#E32619</div>
+
+    <!-- STICKY HEADER -->
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="header-logo">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"></rect><path d="M8 12h8"></path></svg>
+                Nayesha / <span>Killjoys</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- SECTION 01: OVERVIEW -->
+    <section class="section-block" style="padding-top: 60px; padding-bottom: 60px;">
+        <div style="text-align: center; margin-bottom: 80px;" class="reveal">
+            <h1 style="font-size: clamp(3rem, 6vw, 5rem); font-weight: 600; line-height: 1.1; letter-spacing: -0.03em;">Humanity.<br>Machines.<br>Uneasy Blur.</h1>
+        </div>
+        <div style="max-width: 700px; margin: 0 auto; text-align: center;" class="reveal">
+            <div style="margin-bottom: 16px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #888;">01. Overview</div>
+            <p style="font-size: 1.25rem; line-height: 1.6; color: #333;">This zine project explores the uneasy blur between human creativity and machine-made images. It documents my journey navigating the tension of authorship and responsibility while working with generative AI tools, serving as a critical reflection on what machines truly "carry" when they create.</p>
+        </div>
+    </section>
+
+    <!-- SECTION 02: THE PROCESS -->
+    <section class="section-block reveal" style="padding-top: 60px; padding-bottom: 60px;">
+        <div class="container"><div class="short-line"></div></div>
+        <div class="container">
+            <div class="asym-split">
+                <div class="kicker">02. The Process</div>
+                <div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 24px;">Grappling with Authorship</h3>
+                    <p style="font-size: 1.15rem; line-height: 1.6; color: #333; margin-bottom: 40px;">To explore the uneasy blur between human creativity and machine-made images, I spoke with artists about responsibility and the strange emotions tied to working with AI. The zine fragments these conversations, layering textures and theory to document the tension of working with generative systems.</p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                        <div>
+                            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Methodology</h4>
+                            <p style="color: #555; line-height: 1.5;">I utilized a process of trial, error, and duality. By juxtaposing AI output against human critique, I highlighted the labor that speed usually hides.</p>
+                        </div>
+                        <div>
+                            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Key Themes</h4>
+                            <p style="color: #555; line-height: 1.5;">Authorship, algorithmic haunting, and the tension between perceived speed and actual creative craft.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 03: TRUE 3D SPREAD -->
+    <section class="section-block reveal" style="padding-top: 60px; padding-bottom: 60px;">
+        <div class="container"><div class="short-line"></div></div>
+        <div class="container">
+            <div class="kicker" style="margin-bottom: 40px; text-align: center;">03. Visual Documentation</div>
+            <div class="flipbook-wrapper">
+                <div class="book-presentation-bg">
+                    <button class="nav-arrow prev-arrow" id="btn-prev" aria-label="Previous Page"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+                    <button class="nav-arrow next-arrow" id="btn-next" aria-label="Next Page"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+                    <div class="book-container" id="zine-container">
+                        <div class="shadow-caster" id="shadow-caster"></div>
+                        <div class="spine-center" id="book-spine"></div>
+                        <div class="sheet"><div class="face front"><img src="killjoys1.png" alt="Cover"><div class="lighting"></div></div><div class="face back"><img src="killjoys2.png" alt="Page 2"><div class="lighting"></div></div></div>
+                        <div class="sheet"><div class="face front"><img src="killjoys3.png" alt="Page 3"><div class="lighting"></div></div><div class="face back"><img src="killjoys4.png" alt="Page 4"><div class="lighting"></div></div></div>
+                        <div class="sheet"><div class="face front"><img src="killjoys5.png" alt="Page 5"><div class="lighting"></div></div><div class="face back"><img src="killjoys6.png" alt="Page 6"><div class="lighting"></div></div></div>
+                        <div class="sheet"><div class="face front"><img src="killjoys7.png" alt="Page 7"><div class="lighting"></div></div><div class="face back"><img src="killjoys8.png" alt="Page 8"><div class="lighting"></div></div></div>
+                        <div class="sheet"><div class="face front"><img src="killjoys9.png" alt="Page 9"><div class="lighting"></div></div><div class="face back"><img src="killjoys10.png" alt="Page 10"><div class="lighting"></div></div></div>
+                        <div class="sheet"><div class="face front"><img src="killjoys11.png" alt="Page 11"><div class="lighting"></div></div><div class="face back"><img src="killjoys12.png" alt="Page 12"><div class="lighting"></div></div></div>
+                        <div class="sheet"><div class="face front"><img src="killjoys13.png" alt="Page 13"><div class="lighting"></div></div><div class="face back" style="background-color: #E32619;"><div class="lighting"></div></div></div>
+                    </div>
+                    <p class="hint-text">Use the arrows to flip pages or click the pages directly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 04: VISUAL IDENTITY -->
+    <section class="section-block reveal" style="padding-top: 60px; padding-bottom: 60px;">
+        <div class="container"><div class="short-line"></div></div>
+        
+        <div class="container">
+            <!-- Centered Header Block -->
+            <div style="text-align: center;">
+                <div class="kicker" style="margin-bottom: 24px;">04. Visual Identity</div>
+                <h2 class="overhead-title">Stripped-Down & Visceral</h2>
+            </div>
+
+            <!-- Full Width 50/50 Grid (Perfectly Center Aligned) -->
+            <div class="grid-half">
+                
+                <!-- Left: Explanation Text -->
+                <div class="id-text-block">
+                    <p>To capture the tension between human craft and machine output, I abandoned decorative design in favor of a <strong>stark, high-friction visual language</strong>. The aesthetic logic is defined by friction, duality, and sensory residue:</p>
+                    
+                    <ul>
+                        <li><strong>Restricted Palette:</strong> Aggressive red, void black, and stark off-white create a warning-like atmosphere echoing algorithmic haunting.</li>
+                        <li><strong>Bold Typography:</strong> Oversized black headlines juxtaposed against fragmented text mirror the <strong>cognitive dissonance</strong> discussed by artists.</li>
+                        <li><strong>Analog/Digital Blur:</strong> Hand-drawn scribbles mixed with AI output physically anchor the <strong>invisible human labor</strong> that machines erase.</li>
+                    </ul>
+                </div>
+
+                <!-- Right: Color Card (Taller Pills & Expanded Text) -->
+                <div class="color-card">
+                    <div class="color-pills-container">
+                        <div class="color-pill" data-hex="#FF8A8A" style="background: #FF8A8A;"></div>
+                        <div class="color-pill" data-hex="#FF5B5B" style="background: #FF5B5B;"></div>
+                        <div class="color-pill" data-hex="#F03C35" style="background: #F03C35;"></div>
+                        <div class="color-pill" data-hex="#E32619" style="background: #E32619;"></div>
+                        <div class="color-pill" data-hex="#B9190E" style="background: #B9190E;"></div>
+                        <div class="color-pill" data-hex="#8A1008" style="background: #8A1008;"></div>
+                        <div class="color-pill" data-hex="#5E0A05" style="background: #5E0A05;"></div>
+                        <div class="color-pill" data-hex="#360502" style="background: #360502;"></div>
+                        <div class="color-pill" data-hex="#111111" style="background: #111111; border: 1px solid #333;"></div>
+                        <div class="color-pill" data-hex="#F5F5F3" style="background: #F5F5F3;"></div>
+                    </div>
+                    <div>
+                        <h4 style="color: #fff; margin-bottom: 8px; font-size: 1.05rem; font-weight: 600; letter-spacing: -0.01em;">Sequential Palette</h4>
+                        <p style="color: #aaa; font-size: 0.85rem; line-height: 1.6; font-weight: 400;">A somatic scale where darker reds represent algorithmic intensity and cognitive void, while signature reds anchor human friction and emotional residue. The stark off-white provides a necessary grounding contrast, preventing visual fatigue across the dense spreads.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 05: CLOSING -->
+    <section class="section-block reveal" style="padding-top: 60px; padding-bottom: 120px;">
+        <div class="container"><div class="short-line"></div></div>
+        
+        <div class="container">
+            <!-- Centered Header Block -->
+            <div style="text-align: center; max-width: 700px; margin: 0 auto;">
+                <div class="kicker" style="margin-bottom: 16px;">05. Closing</div>
+                <h2 style="font-size: clamp(3rem, 6vw, 4.5rem); font-weight: 700; letter-spacing: -0.03em; color: #111; margin-bottom: 24px;">Journey Ends</h2>
+                <p style="font-size: 1.15rem; line-height: 1.6; color: #555;">This project was a deep dive into the emotional landscape of generative AI, pushing me to confront the tension between speed and authorship. Here are some standout reflections.</p>
+            </div>
+
+            <!-- Full Width 50/50 Grid -->
+            <div class="closing-grid" style="margin-top: 80px;">
+                
+                <!-- Left: Winning Moments -->
+                <div class="closing-text-block">
+                    <h3 style="font-size: 1.4rem; font-weight: 600; margin-bottom: 24px;">Winning Moments</h3>
+                    <ul style="font-size: 1.1rem; line-height: 1.6; color: #333; padding-left: 1.2em;">
+                        <li style="margin-bottom: 16px;"><strong>Capturing the Friction:</strong> Successfully translating complex, abstract artist interviews into a visceral, tangible editorial format.</li>
+                        <li style="margin-bottom: 16px;"><strong>Embracing Imperfection:</strong> Learning to let go of "smooth" tech-focused design to let the raw, messy nature of the subject matter dictate the visual language.</li>
+                        <li style="margin-bottom: 0;"><strong>Provoking Discomfort:</strong> Creating a piece that doesn't just display information, but physically forces the reader to sit with the unease of machine-made art.</li>
+                    </ul>
+                </div>
+
+                <!-- Right: Lessons Learned -->
+                <div class="closing-text-block">
+                    <h3 style="font-size: 1.4rem; font-weight: 600; margin-bottom: 24px;">Lessons Learned</h3>
+                    <ul style="font-size: 1.1rem; line-height: 1.6; color: #333; padding-left: 1.2em;">
+                        <li style="margin-bottom: 16px;"><strong>The Medium is the Message:</strong> Realizing that the physical constraints and stark aesthetic choices of a zine communicate just as much as the written content itself.</li>
+                        <li style="margin-bottom: 16px;"><strong>Navigating Hypocrisy:</strong> Grappling with the ethical gray areas of using the exact tools (generative AI) I was critiquing, and finding a way to make that contradiction visible rather than hiding it.</li>
+                        <li style="margin-bottom: 0;"><strong>Pacing the Reader:</strong> Understanding that "speed hides the labor," and deliberately using dense layouts and harsh contrast to slow down the reading experience.</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </section>
+        
+    <!-- LOCKED FOOTER -->
+    <footer class="dark reveal">
+        <div class="footer-wrapper">
+            <div class="footer-row">
+                <div class="footer-col-left"><a href="index.html" class="back-link">← Go Back Home</a><h2>Up Next</h2></div>
+                <div class="footer-col-right books-grid">
+                    <a href="snug.html" class="book footer-book"><img src="book-back-pink.png" class="layer back" alt=""><img src="book-pages.png" class="layer pages" alt=""><img src="snug-cover.png" class="layer cover" alt=""></a>
+                    <a href="nokino.html" class="book footer-book"><img src="nokino-book-back.png" class="layer back" alt=""><img src="book-pages.png" class="layer pages" alt=""><img src="nokino-cover.png" class="layer cover" alt=""></a>
+                </div>
+            </div>
+            <div class="footer-row">
+                <div class="footer-col-left">
+                    <h3>Let's Connect</h3>
+                </div>
+                <div class="footer-col-right contact-list">
+                    <!-- ADDED: ANIMATED CONNECT LINKS -->
+                    <a href="#" class="contact-link">
+                        <span class="contact-text">Email</span> 
+                        <span class="contact-arrow">↗</span>
+                    </a>
+                    <a href="#" class="contact-link">
+                        <span class="contact-text">LinkedIn</span> 
+                        <span class="contact-arrow">↗</span>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-bottom"><p>© 2026 All rights reserved</p></div>
+        </div>
+    </footer>
+
+    <!-- ANIMATION & LOGIC SCRIPT -->
+    <script>
+        // --- SCROLL REVEAL ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // --- BOOK PHYSICS ENGINE ---
+        const sheets = document.querySelectorAll('.sheet');
+        const container = document.getElementById('zine-container');
+        const shadowCaster = document.getElementById('shadow-caster');
+        const spine = document.getElementById('book-spine');
+        let currentIndex = 0;
+
+        function updateBookState() {
+            if (currentIndex === 0) {
+                container.style.transform = 'translateX(-25%)';
+                shadowCaster.style.width = '50%';
+                shadowCaster.style.left = '50%';
+                shadowCaster.style.borderRadius = '0 12px 12px 0'; 
+                spine.style.opacity = '0';
+            } else if (currentIndex === sheets.length) {
+                container.style.transform = 'translateX(25%)';
+                shadowCaster.style.width = '50%';
+                shadowCaster.style.left = '0%';
+                shadowCaster.style.borderRadius = '12px 0 0 12px'; 
+                spine.style.opacity = '0';
+            } else {
+                container.style.transform = 'translateX(0)';
+                shadowCaster.style.width = '100%';
+                shadowCaster.style.left = '0%';
+                shadowCaster.style.borderRadius = '12px'; 
+                spine.style.opacity = '1';
+            }
+        }
+
+        sheets.forEach((sheet, i) => {
+            sheet.style.zIndex = sheets.length - i;
+            sheet.addEventListener('click', function() {
+                if (this.classList.contains('flipped')) { flipPrev(); } 
+                else { flipNext(); }
+            });
+        });
+        updateBookState();
+
+        function flipNext() {
+            if (currentIndex < sheets.length) {
+                const sheet = sheets[currentIndex];
+                sheet.style.zIndex = 100;
+                sheet.classList.add('flipped');
+                setTimeout(() => { sheet.style.zIndex = currentIndex + 1; }, 400); 
+                currentIndex++;
+                updateBookState();
+            }
+        }
+
+        function flipPrev() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                const sheet = sheets[currentIndex];
+                sheet.style.zIndex = 100;
+                sheet.classList.remove('flipped');
+                setTimeout(() => { sheet.style.zIndex = sheets.length - currentIndex; }, 400); 
+                updateBookState();
+            }
+        }
+
+        document.getElementById('btn-next').addEventListener('click', flipNext);
+        document.getElementById('btn-prev').addEventListener('click', flipPrev);
+
+        // --- UPDATED APPLE-STYLE GLASS CURSOR PILL LOGIC ---
+        const tooltip = document.getElementById('hex-tooltip');
+        const colorPills = document.querySelectorAll('.color-pill');
+
+        colorPills.forEach(pill => {
+            pill.addEventListener('mousemove', (e) => {
+                tooltip.textContent = pill.getAttribute('data-hex');
+                // Offset the tooltip cleanly above the normal mouse cursor
+                tooltip.style.left = e.clientX + 'px';
+                tooltip.style.top = (e.clientY - 15) + 'px';
+            });
+            
+            pill.addEventListener('mouseenter', () => {
+                tooltip.classList.add('visible');
+            });
+            
+            pill.addEventListener('mouseleave', () => {
+                tooltip.classList.remove('visible');
+            });
+        });
+    </script>
+</body>
+</html>
